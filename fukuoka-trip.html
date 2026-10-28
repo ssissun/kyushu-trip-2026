@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>후쿠오카 여행 일정</title>
+<style>
+  :root {
+    --bg: #F6F1EA;
+    --surface: #FFFDF9;
+    --ink: #22201C;
+    --ink-2: #5E574D;
+    --ink-3: #958B7E;
+    --line: #E6DDD0;
+    --accent: #C8502D;
+    --accent-soft: #F6E2D8;
+    --move: #3E6E8E;   --move-bg: #E2ECF2;
+    --food: #B5652A;   --food-bg: #F5E6D6;
+    --see: #4C7A4A;    --see-bg: #E3EEDF;
+    --stay: #6E5596;   --stay-bg: #ECE5F4;
+    --fly: #C8502D;    --fly-bg: #F6E2D8;
+    --shadow: 0 1px 2px rgba(40,30,20,.05), 0 6px 20px rgba(40,30,20,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17161A;
+      --surface: #212024;
+      --ink: #EFEAE3;
+      --ink-2: #B9B1A6;
+      --ink-3: #847C72;
+      --line: #34323A;
+      --accent: #EE7C55;
+      --accent-soft: #3A2620;
+      --move: #8DB8D6;   --move-bg: #22303A;
+      --food: #E3A66F;   --food-bg: #3A2C20;
+      --see: #94C48F;    --see-bg: #233024;
+      --stay: #B9A2DE;   --stay-bg: #2E2738;
+      --fly: #EE7C55;    --fly-bg: #3A2620;
+      --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17161A; --surface: #212024; --ink: #EFEAE3; --ink-2: #B9B1A6; --ink-3: #847C72;
+    --line: #34323A; --accent: #EE7C55; --accent-soft: #3A2620;
+    --move: #8DB8D6; --move-bg: #22303A; --food: #E3A66F; --food-bg: #3A2C20;
+    --see: #94C48F; --see-bg: #233024; --stay: #B9A2DE; --stay-bg: #2E2738;
+    --fly: #EE7C55; --fly-bg: #3A2620; --shadow: none;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px 64px; }
+
+  /* Hero */
+  .hero { padding: 40px 0 24px; }
+  .eyebrow {
+    font-size: 13px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700;
+  }
+  .hero h1 { margin: 8px 0 6px; font-size: clamp(28px, 6vw, 40px); line-height: 1.2; letter-spacing: -.02em; }
+  .hero .dates { color: var(--ink-2); font-size: 16px; }
+  .hero .dates b { color: var(--ink); }
+
+  /* Route */
+  .route {
+    margin-top: 24px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 16px; padding: 18px 16px; box-shadow: var(--shadow);
+  }
+  .route ol { list-style: none; margin: 0; padding: 0; display: flex; gap: 0; }
+  .route li { flex: 1; position: relative; text-align: center; padding-top: 22px; min-width: 0; }
+  .route li::before {
+    content: ""; position: absolute; top: 6px; left: 50%; width: 12px; height: 12px;
+    margin-left: -6px; border-radius: 50%; background: var(--surface);
+    border: 3px solid var(--accent); z-index: 1;
+  }
+  .route li::after {
+    content: ""; position: absolute; top: 11px; left: 50%; width: 100%; height: 2px;
+    background: var(--line);
+  }
+  .route li:last-child::after { display: none; }
+  .route .place { font-weight: 700; font-size: 15px; }
+  .route .sub { font-size: 12.5px; color: var(--ink-3); }
+
+  .stays { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+  .stay {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 12px 14px; box-shadow: var(--shadow);
+  }
+  .stay .n { font-size: 12px; color: var(--ink-3); }
+  .stay .h { font-weight: 700; font-size: 15px; margin-top: 2px; }
+  .stay .a { font-size: 13px; color: var(--ink-2); }
+  .stay .ref {
+    font-size: 12.5px; color: var(--ink-3); margin-top: 6px; padding-top: 6px;
+    border-top: 1px dashed var(--line); font-variant-numeric: tabular-nums;
+  }
+
+  /* Day nav */
+  .daynav {
+    position: sticky; top: 0; z-index: 10; background: var(--bg);
+    margin: 28px -16px 0; padding: 10px 16px; border-bottom: 1px solid var(--line);
+    display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+  }
+  .daynav::-webkit-scrollbar { display: none; }
+  .daynav a {
+    flex: 0 0 auto; text-decoration: none; color: var(--ink-2);
+    background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+    padding: 6px 14px; font-size: 14px; font-weight: 600; white-space: nowrap;
+  }
+  .daynav a:hover { color: var(--ink); border-color: var(--ink-3); }
+  .daynav a.today { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* Day */
+  .day { margin-top: 36px; }
+  .day-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 4px; }
+  .day-no {
+    font-size: 13px; font-weight: 800; letter-spacing: .08em; color: var(--accent);
+    background: var(--accent-soft); border-radius: 6px; padding: 3px 8px; white-space: nowrap;
+  }
+  .day-date { font-size: 15px; color: var(--ink-2); font-weight: 600; }
+  .day h2 { margin: 6px 0 2px; font-size: 24px; letter-spacing: -.01em; }
+  .day .area { color: var(--ink-3); font-size: 14px; margin: 0 0 14px; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+    box-shadow: var(--shadow); overflow: hidden;
+  }
+  .row {
+    display: grid; grid-template-columns: 116px 1fr; gap: 12px;
+    padding: 13px 16px; border-top: 1px solid var(--line); align-items: start;
+  }
+  .row:first-child { border-top: 0; }
+  .time {
+    font-variant-numeric: tabular-nums; font-size: 14.5px; font-weight: 600;
+    color: var(--ink-2); padding-top: 1px; white-space: nowrap;
+  }
+  .what { display: flex; gap: 10px; align-items: flex-start; min-width: 0; }
+  .what .t { flex: 1; min-width: 0; }
+  .what .title { font-weight: 600; }
+  .what .jp { color: var(--ink-3); font-size: 12.5px; margin-left: 6px; font-weight: 400; }
+  .what .note { color: var(--ink-3); font-size: 13.5px; margin-top: 1px; }
+  .num {
+    display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
+    background: var(--see); color: var(--surface); font-size: 12px; font-weight: 800;
+    margin-right: 6px; vertical-align: 1px;
+  }
+
+  .tag {
+    flex: 0 0 auto; font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 6px;
+    margin-top: 2px; white-space: nowrap;
+  }
+  .tag.move { color: var(--move); background: var(--move-bg); }
+  .tag.food { color: var(--food); background: var(--food-bg); }
+  .tag.snack { color: var(--food); background: transparent; box-shadow: inset 0 0 0 1px var(--food); }
+  .tag.dessert { color: var(--accent); background: transparent; box-shadow: inset 0 0 0 1px var(--accent); }
+  .tag.cafe { color: var(--stay); background: transparent; box-shadow: inset 0 0 0 1px var(--stay); }
+  .tag.shop { color: var(--move); background: transparent; box-shadow: inset 0 0 0 1px var(--move); }
+
+  .extras { margin-top: 48px; padding-top: 8px; border-top: 2px solid var(--line); }
+  .extras > h2 { font-size: 24px; margin: 18px 0 4px; }
+  .extras > .sub { color: var(--ink-3); font-size: 14px; margin: 0 0 8px; }
+  .extras h3 { font-size: 17px; margin: 26px 0 4px; }
+  .extras .intro { color: var(--ink-2); font-size: 14px; margin: 0 0 10px; }
+  .extras .hours { font-size: 13px; color: var(--ink-2); margin-top: 2px; }
+  .extras .spare { font-size: 13.5px; color: var(--ink-2); margin-top: 10px; padding: 10px 14px; border: 1px dashed var(--line); border-radius: 12px; background: var(--surface); }
+  .tag.see  { color: var(--see);  background: var(--see-bg); }
+  .tag.stay { color: var(--stay); background: var(--stay-bg); }
+  .tag.fly  { color: var(--fly);  background: var(--fly-bg); }
+
+  .row.highlight { background: var(--see-bg); }
+  .row.alt { border-top: 1px dashed var(--line); background: var(--bg); }
+  .row.alt .time { visibility: hidden; }
+  .row.alt .title { color: var(--ink-2); }
+  .row.highlight .time { color: var(--see); }
+  .row.now { background: var(--accent-soft); box-shadow: inset 4px 0 0 var(--accent); }
+  .row.now .time { color: var(--accent); }
+  .row.now .time::after {
+    content: "지금"; display: block; font-size: 11px; font-weight: 800; color: var(--accent);
+    letter-spacing: .05em;
+  }
+
+  .tip {
+    margin-top: 10px; padding: 12px 14px; border-radius: 12px; font-size: 14px;
+    background: var(--surface); border: 1px dashed var(--line); color: var(--ink-2);
+  }
+  .tip b { color: var(--ink); }
+
+  .level {
+    font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 6px; white-space: nowrap;
+  }
+  .level.tight  { color: var(--accent); background: var(--accent-soft); }
+  .level.dense  { color: var(--food); background: var(--food-bg); }
+  .level.normal { color: var(--move); background: var(--move-bg); }
+  .level.easy   { color: var(--see); background: var(--see-bg); }
+  .day-head .level { margin-left: auto; }
+
+  .pace { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+  .pace a {
+    text-decoration: none; text-align: center; border-radius: 12px; padding: 10px 4px;
+    background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
+  }
+  .pace .d { display: block; font-size: 12px; color: var(--ink-3); font-weight: 600; margin-bottom: 4px; }
+
+  .checks {
+    margin: 0 0 12px; padding: 12px 14px 12px 34px; border-radius: 12px; font-size: 14px;
+    background: var(--surface); border: 1px solid var(--line); color: var(--ink-2);
+  }
+  .checks li { margin: 2px 0; }
+  .checks li::marker { content: "✓  "; color: var(--accent); font-weight: 800; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+
+  .links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .links a {
+    font-size: 12.5px; font-weight: 600; text-decoration: none; color: var(--move);
+    border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 2px 10px;
+  }
+  .links a:hover { border-color: var(--move); }
+  .hero .doc-link { color: var(--accent); font-weight: 600; text-decoration: none; margin-left: 6px; white-space: nowrap; }
+
+  .cost { font-size: 13px; margin-top: 3px; color: var(--accent); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .cost .lbl { color: var(--ink-3); font-weight: 400; }
+  .cost.tbd { color: var(--ink-3); font-weight: 600; }
+  .cost.incl { color: var(--stay); font-weight: 600; }
+
+  .budget {
+    margin-top: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 16px; box-shadow: var(--shadow);
+  }
+  .budget .b-label { font-size: 12px; font-weight: 800; letter-spacing: .08em; color: var(--ink-3); }
+  .budget .b-amount { font-size: 26px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; margin: 2px 0 4px; }
+  .budget .b-note { font-size: 13px; color: var(--ink-2); }
+  .budget .b-note + .b-note { margin-top: 2px; }
+  .day-budget { font-size: 14px; color: var(--ink-2); margin: -8px 0 12px; }
+  .day-budget b { color: var(--accent); font-variant-numeric: tabular-nums; }
+
+  footer { margin-top: 48px; color: var(--ink-3); font-size: 13px; text-align: center; }
+
+  @media (max-width: 560px) {
+    .stays { grid-template-columns: 1fr; }
+    .row { grid-template-columns: 1fr; gap: 2px; padding: 12px 14px; }
+    .time { font-size: 13.5px; }
+    .row.now .time::after { display: inline; margin-left: 8px; }
+    .route .place { font-size: 13.5px; }
+    .route .sub { font-size: 11.5px; }
+  }
+
+  @media print {
+    .daynav { display: none; }
+    body { background: #fff; }
+    .card, .route, .stay { box-shadow: none; }
+    .day { break-inside: avoid-page; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">Kyushu Trip · 3박 4일</div>
+    <h1>후쿠오카 · 벳푸 · 유후인</h1>
+    <div class="dates"><b>2026. 11. 4 (수) — 11. 7 (토)</b> · 렌터카 여행 · 4명 <a class="doc-link" href="restaurants.html">식당 후보 →</a> <a class="doc-link" href="reservations.html">예약 체크리스트 →</a></div>
+
+    <div class="route">
+      <ol>
+        <li><div class="place">후쿠오카</div><div class="sub">공항 도착</div></li>
+        <li><div class="place">벳푸</div><div class="sub">2박</div></li>
+        <li><div class="place">유후인</div><div class="sub">1박</div></li>
+        <li><div class="place">후쿠오카</div><div class="sub">13:00 출발</div></li>
+      </ol>
+    </div>
+
+    <div class="stays">
+      <div class="stay"><div class="n">11/4 · 11/5</div><div class="h">호텔 뉴 츠루타</div><div class="a">벳푸 · 2박</div><div class="ref">체크인 15:00 · 체크아웃 10:00</div></div>
+      <div class="stay"><div class="n">11/6</div><div class="h">바이엔 료칸</div><div class="a">유후인 · 1박 (저녁 포함)</div><div class="ref">체크인 15:00 · 체크아웃 10:30</div></div>
+      <div class="stay"><div class="n">11/4 → 11/7</div><div class="h">렌터카</div><div class="a">후쿠오카 픽업 · 반납</div></div>
+    </div>
+
+    <div class="pace" id="pace"></div>
+
+    <div class="budget" id="budget"></div>
+
+    <div class="legend">
+      <span class="tag fly">항공</span>
+      <span class="tag move">이동</span>
+      <span class="tag see">관광</span>
+      <span class="tag food">식사</span>
+      <span class="tag snack">간식</span>
+      <span class="tag stay">숙소</span>
+    </div>
+  </header>
+
+  <nav class="daynav" id="daynav"></nav>
+
+  <main id="days"></main>
+
+  <section class="extras" id="extras"></section>
+
+  <footer>즐거운 여행 되세요 ✈️</footer>
+</div>
+
+<script>
+  const gmap = (q) => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
+
+  const DAYS = [
+    {
+      id: "d1", date: "2026-11-04", label: "11월 4일 (수)",
+      title: "도착 & 벳푸로", area: "후쿠오카 공항 → 텐진(낭클 · 무사시자) → 벳푸",
+      level: "tight",
+      checks: [
+        "저녁 시간대 입국 대기가 길면 이후 일정이 줄줄이 밀릴 수 있음",
+        "무사시자 예약: 전화 050-5597-7133 또는 대행 예약 — 미미테이블(본점 페이지, 옆 '은메달 2호점'과 헷갈리지 않기) / AutoReserve(마감 11/1 12:30 일본 시간, 10/28 기준 20:30 자리 안 보임) — 4명 · 20:30 · 연락 없이 취소하면 취소료 청구될 수 있음",
+        "낭클은 선택 — 20:00까지 다이묘에 못 가면 건너뛰고 무사시자로 직행 (예약보다 일찍 도착하면 자리 있는지 문의)",
+        "주택가 골목이라 전용 주차장 정보 없음 — 근처 코인 주차장 미리 찾아두기",
+        "식사 후 2시간 운전 — 운전자는 술 X · 4명이면 킨키 1마리로는 부족할 수 있어 2마리도 고려",
+        "호텔에 자정 넘어(00:10 전후) 늦은 체크인 미리 알리기 (대욕장은 24시까지라 그날 온천은 어려움)",
+      ],
+      items: [
+        ["17:55", "후쿠오카 공항 도착", "fly"],
+        ["17:55~19:00", "입국 수속 · 수하물 수령 · 렌터카 업체 이동", "move"],
+        ["19:00~19:30", "렌터카 픽업 및 차량 확인", "move"],
+        ["19:30~20:05", "텐진 다이묘(낭클)로 이동", "move", "저녁 정체 포함 약 35분"],
+        ["20:05~20:20", "낭클 (타코야키) · 선택", "snack", "⏭ 시간 여유 없으면 건너뛰고 무사시자로 직행 · 영업 12:00~21:45 (타베로그)", "nancle", 0, { min: 0, max: 1000, label: "暴れだこ 5개 ¥800~1,000 · 건너뛰면 ¥0" }, [["타베로그", "https://tabelog.com/en/fukuoka/A4001/A400104/40055490/"], ["지도", "https://maps.app.goo.gl/rRmvCsFkKZyjxSWu5"]]],
+        ["20:20~20:30", "스미게키죠 무사시자로 이동", "move", "다이묘 → 渡辺通 차로 약 5분 · 근처 코인 주차장"],
+        ["20:30~22:00", "스미게키죠 무사시자 (원시 화로구이)", "food", "저녁 · 홍살치(キンキ) 구이 추천", "すみ劇場 むさし坐", 0, { min: 7000, max: 12000, label: "4인 기준 · 킨키 1마리면 ¥7,000~9,000, 2마리면 ¥9,500~12,000 (술 제외, 추정)" }, [["타베로그", "https://tabelog.com/en/fukuoka/A4001/A400103/40051308/"], ["지도", "https://maps.app.goo.gl/sVWsbjq7KTn5o1de9"]]],
+        ["22:00~00:10", "벳푸 호텔 뉴 츠루타로 이동", "move", "약 2시간 + 휴게소"],
+        ["00:10 전후", "호텔 체크인 및 휴식", "stay", "낭클을 건너뛰면 23:50 전후", "ホテルニューツルタ", 0, null, [["잘란", "https://www.jalan.net/yad316546/"], ["지도", gmap("ホテルニューツルタ 別府")]]],
+      ],
+    },
+    {
+      id: "d2", date: "2026-11-05", label: "11월 5일 (목)",
+      title: "벳푸 지옥 순례 · 수족관 · 원숭이 공원", area: "벳푸 칸나와 → 우미타마고 → 다카사키야마",
+      level: "dense",
+      checks: [
+        "쉬는 틈 없이 이어지지만 장소끼리 가까워 이동 부담은 적음",
+        "점심 오와다즈시 12:00 · 4명 — 전화 0977-21-0263 또는 미미테이블 대행 예약 (신청이 늦을수록 수락률이 떨어지니 일찍) · 니기리 가격은 세금 별도",
+        "저녁 도요켄은 일반 메뉴라면 예약 없이 방문 (대기 가능) — 튀김이 부담되면 대안 1 초로마츠 (호텔 도보 4분) 또는 대안 2 아마미차야 (당고지루, 차로 약 15분)",
+        "원숭이 공원 운영 09:00~17:00 · 입장 마감 16:30 (공식) — 수족관에서 늦게 나오면 입장 불가",
+        "입구 → 원숭이 모이는 곳: 도보 약 6분 또는 さるっこレール (운행 ~16:30 · 내려오는 마지막 편 16:50)",
+      ],
+      items: [
+        ["07:30~08:15", "호텔 조식", "food"],
+        ["08:15~08:45", "철륜(간나와) 지옥 순례 지역으로 이동", "move"],
+        ["08:45~09:30", "바다지옥", "see", "", "海地獄", 1, { min: 2400, max: 2400, label: "지옥 순례 공통 관람권 (4곳 포함)" }, [["지옥 순례 공식", "https://www.beppu-jigoku.com/"], ["지도", gmap("海地獄 別府")]]],
+        ["09:35~10:05", "가마솥지옥", "see", "", "かまど地獄", 2, null, [["지도", gmap("かまど地獄 別府")]]],
+        ["10:10~10:35", "오니야마지옥", "see", "", "鬼山地獄", 3, null, [["지도", gmap("鬼山地獄 別府")]]],
+        ["10:45~11:15", "흰연못지옥", "see", "", "白池地獄", 4, null, [["지도", gmap("白池地獄 別府")]]],
+        ["11:15~11:40", "기념품 · 간식", "see"],
+        ["11:40~12:00", "기타하마(오와다즈시)로 이동", "move", "약 19분 · 수족관 가는 길 위"],
+        ["12:00~13:15", "오와다즈시 (스시)", "food", "점심 · 銀扇 니기리 10관 (関あじ·関さば 포함) · 12:00 예약 (4명)", "大和田鮨", 0, { min: 5500, max: 6000, label: "銀扇 ¥4,950 + 세금 (점심 お通し 여부 확인 못 함)" }, [["타베로그", "https://tabelog.com/en/oita/A4402/A440202/44000628/"], ["지도", gmap("大和田鮨 別府")], ["다른 후보", "restaurants.html#51-2일차-점심-115-목"]]],
+        ["13:15~13:25", "우미타마고로 이동", "move", "약 7분"],
+        ["13:25~16:00", "수족관 관람 및 공연", "see", "우미타마고", "", 0, { min: 3000, max: 3000, label: "입관료 (공식)" }, [["공식", "https://www.umitamago.jp/"], ["지도", gmap("うみたまご 大分マリーンパレス水族館")]]],
+        ["16:00~16:10", "다카사키야마로 이동", "move"],
+        ["16:10~17:00", "원숭이 공원 관람", "see", "다카사키야마", "", 0, { min: 500, max: 660, label: "입장료 + さるっこレール 왕복 ¥160 (공식)" }, [["공식", "https://www.takasakiyama.jp/"], ["지도", gmap("高崎山自然動物園")]]],
+        ["17:00~17:30", "벳푸 호텔 복귀", "move"],
+        ["18:00~19:30", "도요켄 (토리텐 원조)", "food", "저녁 · 本家とり天定食 · 호텔에서 차로 8~10분 · 일반 메뉴는 예약 없이 방문 (4명 이상 예약은 코스 ¥6,600~만)", "レストラン東洋軒", 0, { min: 1500, max: 1750, label: "本家とり天定食" }, [["타베로그", "https://tabelog.com/en/oita/A4402/A440202/44000534/"], ["공식", "https://www.toyoken-beppu.co.jp/"], ["지도", gmap("レストラン東洋軒 別府")]]],
+        ["18:00~19:30", "↳ 대안 1: 초로마츠 (향토요리 이자카야)", "food", "튀김이 부담되면 · 호텔에서 도보 4분 · りゅうきゅう(양념 회) · 오리국 등 튀김 아닌 메뉴로 주문 · 온라인 예약", "チョロ松", 0, { alt: true, min: 2800, max: 5500, label: "가볍게 ¥2,800~3,000 · 넉넉히 ¥5,000~5,500 (서비스료 포함 추정)" }, [["타베로그", "https://tabelog.com/en/oita/A4402/A440202/44000327/"], ["지도", gmap("チョロ松 別府")]]],
+        ["18:00~19:30", "↳ 대안 2: 아마미차야 (당고지루)", "food", "튀김이 부담되면 · 메뉴: だんご汁(당고지루, 오이타 향토 수제비 국) 정식 · 찻집이지만 향토 식사도 팜 · 간나와 쪽, 호텔에서 차로 약 15분 (추정) · 21:00까지 (LO 20:30) · 주차 30대", "別府甘味茶屋", 0, { alt: true, min: 1290, max: 1400, label: "だんご汁定食 (토리텐이 들어간 ふるさと定食은 피하기)" }, [["타베로그", "https://tabelog.com/en/oita/A4402/A440202/44000026/"], ["공식 메뉴", "https://amamichaya.greater.jp/menu/"], ["지도", gmap("甘味茶屋 別府 実相寺")]]],
+        ["19:30 이후", "온천 · 휴식", "stay"],
+      ],
+      tip: "<b>지옥 순례</b> 08:00~17:00 운영 · 공통 관람권 성인 2,400엔 / 초·중학생 1,200엔",
+    },
+    {
+      id: "d3", date: "2026-11-06", label: "11월 6일 (금)",
+      title: "유후다케 · 유후인", area: "벳푸 → 유후다케 → 유후인",
+      level: "easy",
+      checks: [
+        "가장 여유로운 날 — 오후 3시부터 료칸에서 휴식",
+        "점심 泉은 예약 불가 · 주차장 없음 — 긴린코 근처 유료 주차장에 한 번 세우고 점심 후 유노츠보 거리까지 걸어서",
+        "료칸 저녁은 18:00 · 19:30 중 선택 (사전 요청, 희망 시간이 안 될 수도 있음) — 18:00으로 요청해 두기",
+      ],
+      items: [
+        ["07:30~08:30", "호텔 뉴 츠루타 조식", "food"],
+        ["08:30~10:00", "체크아웃 준비 및 벳푸 시내에서 여유롭게 출발 준비", "stay"],
+        ["10:00~10:45", "벳푸 → 유후다케산 방향 이동", "move"],
+        ["10:45~11:15", "유후다케산 전망 · 사진 촬영", "see", "", "由布岳", 0, null, [["지도 (狭霧台 전망대)", gmap("狭霧台 由布院")]]],
+        ["11:15~11:30", "유후인 시내 이동", "move"],
+        ["11:30~12:30", "이즈미 (수타 소바)", "food", "점심 · 메밀 100% 수타 소바 · 긴린코 호숫가 · 예약 불가, 주차장 없음", "古式手打ちそば 泉", 0, { min: 1320, max: 1980, label: "せいろ ¥1,320 · 鴨せいろ ¥1,980" }, [["타베로그", "https://tabelog.com/en/oita/A4402/A440201/44000041/"], ["지도", gmap("古式手打ちそば 泉 由布院")], ["다른 후보", "restaurants.html#53-3일차-점심-116-금-유후인"]]],
+        ["12:30~14:15", "유노츠보 거리 쇼핑 · 간식", "see", "", "湯の坪街道", 0, null, [["지도", gmap("湯の坪街道 由布院")]]],
+        ["14:15~14:45", "바이엔 이동", "move"],
+        ["15:00 이후", "체크인 · 온천 · 휴식", "stay", "유후인 바이엔", "由布院 梅園", 0, null, [["공식", "https://www.yufuin-baien.com/"], ["지도", gmap("由布院 梅園 GARDEN RESORT")]]],
+        ["18:00 전후", "바이엔 (료칸 저녁 코스)", "food", "18:00 또는 19:30 중 선택 (사전 요청)", "由布院 梅園", 0, { included: true }],
+      ],
+    },
+    {
+      id: "d4", date: "2026-11-07", label: "11월 7일 (토)",
+      title: "긴린코 산책 & 귀국", area: "유후인 → 후쿠오카 공항",
+      level: "normal",
+      checks: [
+        "료칸 조식은 07:30 · 08:00 · 08:30 중 선택 (사전 요청, 희망 시간이 안 될 수도 있음) — 07:30으로 요청해 두기",
+        "렌터카 반납 전 주유 시간 10~15분 추가",
+        "사와와는 매일 9:30~17:30 (구루나비) — 토요일 다자이후는 붐비고 주차 대기가 있을 수 있으니 30분 안에 출발",
+        "다자이후를 들르면 공항 도착이 11:15쯤 — 출발 1시간 45분 전이라 지체되면 사와와를 건너뛰기",
+        "11월 이른 아침 긴린코 물안개는 일찍 일어날 가치 있음",
+      ],
+      items: [
+        ["06:00~06:40", "긴린코 호수 산책", "see", "", "金鱗湖", 0, null, [["지도", gmap("金鱗湖 由布院")]]],
+        ["06:40~07:20", "바이엔 복귀 및 조식 준비", "stay"],
+        ["07:30~08:00", "조식", "food", "", "", 0, { included: true }],
+        ["08:00", "바이엔 출발", "move"],
+        ["08:00~09:30", "다자이후로 이동", "move", "고속도로 약 1시간 30분"],
+        ["09:30~10:00", "사와와 다자이후점 (말차 디저트)", "snack", "말차 젤라토 · 와라비모치", "茶和々 太宰府店", 0, { min: 650, max: 1050 }, [["구루나비", "https://r.gnavi.co.jp/7vt0hht20000/"], ["지도", "https://maps.app.goo.gl/cXJWDAxeXJf48Ar88"]]],
+        ["10:00~10:35", "후쿠오카 렌터카 반납 지점으로 이동", "move", "약 35분 · 반납 전 주유"],
+        ["10:35~10:45", "렌터카 반납", "move"],
+        ["10:45~11:15", "공항 셔틀 및 체크인 준비", "move"],
+        ["11:15~12:30", "출국 수속 및 탑승 준비", "fly"],
+        ["13:00", "후쿠오카 출발", "fly"],
+      ],
+    },
+  ];
+
+  const TAG_LABEL = { move: "이동", food: "식사", snack: "간식", dessert: "디저트", cafe: "카페", shop: "쇼핑", see: "관광", stay: "숙소", fly: "항공" };
+
+  // 일정 사이에 가볍게 들를 곳 (일정을 바꾸지 않는 선택 사항)
+  const EXTRAS = [
+    {
+      day: "Day 2 · 11월 5일 (목) — 벳푸",
+      intro: "간나와 11:15~11:40, 호텔 근처 17:30~18:00, 저녁 식사 후 빈 시간에 맞춘 곳입니다.",
+      items: [
+        { slot: "지옥 순례 중", title: "바다지옥 매점 (지옥찜 푸딩)", jp: "海地獄 カフェテリア海", tag: "snack",
+          desc: "地獄蒸焼プリン ¥400 · 極楽まんじゅう 15개 ¥650 — 투어 중에 사면 따로 시간이 들지 않음", hours: "8:00~17:00, 연중무휴",
+          links: [["지옥 순례 공식", "https://www.beppu-jigoku.com/"]] },
+        { slot: "11:15~11:40", title: "고에몬 (경단)", jp: "GOEMON めぐり店", tag: "snack",
+          desc: "흰연못지옥 바로 앞이라 차를 옮길 필요 없음 · あんバター団子 ¥330, みたらし ¥220, 磯部チーズ ¥242", hours: "10:00~17:00, 비정기 휴무",
+          links: [["소개 기사", "https://ontrip.jal.co.jp/kyushu/17817901"], ["지도", gmap("GOEMON めぐり店 別府")]] },
+        { slot: "11:25 전후", title: "유케무리 전망대", jp: "湯けむり展望台", tag: "see",
+          desc: "간나와 온천가에서 김이 피어오르는 풍경을 위에서 보는 곳 · 무료, 무료 주차 8~11대 · 北浜 가는 길에 약 5분 우회 (추정)", hours: "11~3월 8:00~21:00",
+          links: [["소개 기사", "https://tabi-mag.jp/ot0371/"], ["지도", gmap("湯けむり展望台 別府")]] },
+        { slot: "17:30~18:00", title: "벳푸 메이힌구라 (기념품)", jp: "別府銘品蔵 · B-Passage", tag: "shop",
+          desc: "벳푸·오이타 기념품을 한곳에서 · 호텔에서 걸어서 몇 분 (別府駅 앞)", hours: "출처마다 다름 (9:00~20:00 / 8:00~21:00)",
+          links: [["소개", "https://4travel.jp/dm_shisetsu/11703723"], ["지도", gmap("別府銘品蔵")]] },
+        { slot: "19:30 이후", title: "다케가와라 온천", jp: "竹瓦温泉", tag: "see",
+          desc: "1879년부터 이어진 공동탕 (지금 목조 건물은 1938년) · 일반탕 ¥300 (현금), 모래찜질 ¥1,500은 30분을 넘기기 쉬움 · 호텔에서 도보 약 200m", hours: "일반탕 6:30~22:30 · 셋째 수요일 휴관 (11/18) → 11/5 영업",
+          links: [["벳푸시 공식", "https://www.city.beppu.oita.jp/sisetu/shieionsen/detail4.html"], ["지도", gmap("竹瓦温泉")]] },
+      ],
+      spare: "예비: 벳푸 타워 전망대 야경 (¥800, 9:30~21:30 — 공식 사이트에 시간 표기가 없어 ☎0977-26-1555로 확인)",
+    },
+    {
+      day: "Day 3 · 11월 6일 (금) — 벳푸 아침 · 유후인",
+      intro: "벳푸 아침 08:30~10:00과 유노츠보 거리 12:30~14:15에 맞춘 곳입니다. 저녁이 코스 요리라 가볍게 드세요.",
+      items: [
+        { slot: "08:30~09:15", title: "도모나가 (빵집)", jp: "友永パン屋", tag: "snack",
+          desc: "1916년 창업 노포 · ワンちゃん(커스터드 강아지빵) ¥140, 메론빵 ¥120 · 전망대 간식용 · 차로 몇 분, 주차장 있음, 줄을 서지만 빨리 줄어든다는 후기 · 타베로그 3.60", hours: "월~토 8:30~18:00 (일·공휴일 휴무)",
+          links: [["타베로그", "https://tabelog.com/en/oita/A4402/A440202/44000059/"], ["지도", gmap("友永パン屋 別府")]] },
+        { slot: "12:30 점심 직후", title: "덴조사지키 (찻집) + 가기야 (유자후추)", jp: "茶房 天井棧敷 · 西国土産 鍵屋", tag: "cafe",
+          desc: "료칸 가메노이벳소 안의 다락방 찻집 · 아이스커피 ¥660 · 1층 기념품점 鍵屋의 수제 유자후추 · 긴린코 쪽이라 소바집 泉 근처 · 타베로그 3.66", hours: "9:00~17:00 (타베로그, 출처에 따라 18:00)",
+          links: [["타베로그", "https://tabelog.com/en/oita/A4402/A440201/44000043/"], ["鍵屋", "https://rurubu.jp/andmore/spot/80041006"], ["지도", gmap("茶房 天井棧敷 由布院")]] },
+        { slot: "13:05 전후", title: "유후인 쿠쿠치 (도라야키)", jp: "由布院 鞠智", tag: "dessert",
+          desc: "갓 구운 도라야키 ¥370을 들고 걸으며 먹기 좋음 · 가을에는 밤 맛 · 유노츠보 거리 · 타베로그 3.57", hours: "평일 10:00~17:00",
+          links: [["타베로그", "https://tabelog.com/en/oita/A4402/A440201/44004414/"], ["지도", gmap("由布院 鞠智")]] },
+        { slot: "13:25 전후", title: "유후인 밀히 본점 (치즈케이크)", jp: "由布院 Milch 本店", tag: "dessert",
+          desc: "3층 치즈케이크 케제쿠헨 ¥180~280 (따뜻한 것 / 차가운 것), 푸딩 ¥300 · 유노츠보 거리 중간 · 줄이 길면 건너뛰기 · 타베로그 3.57", hours: "10:30~17:30, 비정기 휴무",
+          links: [["타베로그", "https://tabelog.com/en/oita/A4402/A440201/44007864/"], ["지도", gmap("由布院 Milch 本店")]] },
+        { slot: "13:50 전후", title: "비스피크 (P롤 롤케이크)", jp: "B-speak", tag: "dessert",
+          desc: "료칸 무라타(無量塔)가 만든 가게 · P롤 ¥1,520~1,620 — 료칸 디저트나 선물로 · 유노츠보 거리 역 쪽 끝이라 마지막에 들르기 · 15시쯤 품절된다는 정보 → 11/1 15:00~17:00에 P롤 예약 전용 ☎0977-28-2066로 예약 · 타베로그 3.64", hours: "10:00~17:00, 연 2회 정도 휴무",
+          links: [["타베로그", "https://tabelog.com/en/oita/A4402/A440201/44000122/"], ["지도", gmap("B-speak 由布院")]] },
+      ],
+      spare: "예비: 카페 라 류슈 (긴린코 호숫가, 건포도 천연효모 크루아상 · 금 9:00~16:30, 수요일 휴무) · 긴쇼 고로케 (고로케 ¥200, 주소가 출처마다 달라 확인 필요)",
+    },
+  ];
+  const LEVEL_LABEL = { tight: "빡빡함", dense: "촘촘함", normal: "보통", easy: "여유" };
+
+  // 1인 예상 경비: 가격이 정해진 항목만 합산하고, 미정 식사는 개수만 센다
+  const yen = (n) => "¥" + n.toLocaleString("ko-KR");
+  const range = (min, max) => (min === max ? yen(min) : `${yen(min)}~${yen(max).slice(1)}`);
+  const sumCost = (items) => items.reduce((acc, it) => {
+    const c = it[6];
+    if (c?.alt) return acc; // 대안은 합계에서 제외
+    if (c?.min != null) { acc.min += c.min; acc.max += c.max; }
+    if (c?.tbd) acc.tbd += 1;
+    return acc;
+  }, { min: 0, max: 0, tbd: 0 });
+  const costLine = (c) => {
+    if (!c) return "";
+    if (c.included) return `<div class="cost incl">숙박 포함</div>`;
+    if (c.tbd) return `<div class="cost tbd">식당 미정 · ${c.tbd}</div>`;
+    return `<div class="cost">${c.alt ? "대안 기준 " : ""}${range(c.min, c.max)} / 인${c.label ? ` <span class="lbl">· ${c.label}</span>` : ""}</div>`;
+  };
+  const linkLine = (links) => links.length
+    ? `<div class="links">${links.map(([label, url]) =>
+        `<a href="${url}"${/^https?:/.test(url) ? ' target="_blank" rel="noopener"' : ""}>${label}</a>`).join("")}</div>`
+    : "";
+
+  const toMin = (hhmm) => { const [h, m] = hhmm.split(":").map(Number); return h * 60 + m; };
+  const times = (s) => (s.match(/\d{2}:\d{2}/g) || []).map(toMin);
+
+  const nav = document.getElementById("daynav");
+  const main = document.getElementById("days");
+
+  DAYS.forEach((day, i) => {
+    document.getElementById("pace").insertAdjacentHTML("beforeend",
+      `<a href="#${day.id}"><span class="d">Day ${i + 1}</span><span class="level ${day.level}">${LEVEL_LABEL[day.level]}</span></a>`);
+
+    nav.insertAdjacentHTML("beforeend",
+      `<a href="#${day.id}" data-date="${day.date}">Day ${i + 1} · ${day.label.replace(/^\d+월 /, "")}</a>`);
+
+    const rows = day.items.map(([time, title, tag, note = "", jp = "", num = 0, cost = null, links = []]) => `
+      <div class="row${num ? " highlight" : ""}${cost?.alt ? " alt" : ""}">
+        <div class="time">${time}</div>
+        <div class="what">
+          <div class="t">
+            <div class="title">${num ? `<span class="num">${num}</span>` : ""}${title}${jp ? `<span class="jp">${jp}</span>` : ""}</div>
+            ${note ? `<div class="note">${note}</div>` : ""}
+            ${costLine(cost)}
+            ${linkLine(links)}
+          </div>
+          <span class="tag ${tag}">${TAG_LABEL[tag]}</span>
+        </div>
+      </div>`).join("");
+
+    main.insertAdjacentHTML("beforeend", `
+      <section class="day" id="${day.id}">
+        <div class="day-head"><span class="day-no">DAY ${i + 1}</span><span class="day-date">${day.label}</span><span class="level ${day.level}">${LEVEL_LABEL[day.level]}</span></div>
+        <h2>${day.title}</h2>
+        <p class="area">${day.area}</p>
+        ${(() => {
+          const s = sumCost(day.items);
+          if (!s.max && !s.tbd) return "";
+          const fixed = s.max ? `<b>${range(s.min, s.max)}</b>` : "";
+          const open = s.tbd ? `식당 미정 ${s.tbd}끼 별도` : "";
+          return `<p class="day-budget">예상 1인 ${[fixed, open].filter(Boolean).join(" + ")}</p>`;
+        })()}
+        <ul class="checks">${day.checks.map(c => `<li>${c}</li>`).join("")}</ul>
+        <div class="card" data-date="${day.date}">${rows}</div>
+        ${day.tip ? `<div class="tip">${day.tip}</div>` : ""}
+      </section>`);
+  });
+
+  nav.insertAdjacentHTML("beforeend", `<a href="#extras">들를 곳</a>`);
+  document.getElementById("extras").innerHTML = `
+    <h2>가볍게 들를 만한 곳</h2>
+    <p class="sub">일정을 바꾸지 않는 선택 사항 · 시간이 남을 때만 · 가격과 시간은 기사·타베로그 기준이라 바뀌었을 수 있음</p>
+    ${EXTRAS.map((g) => `
+      <h3>${g.day}</h3>
+      <p class="intro">${g.intro}</p>
+      <div class="card">${g.items.map((x) => `
+        <div class="row">
+          <div class="time">${x.slot}</div>
+          <div class="what">
+            <div class="t">
+              <div class="title">${x.title}<span class="jp">${x.jp}</span></div>
+              <div class="note">${x.desc}</div>
+              <div class="hours">🕒 ${x.hours}</div>
+              ${linkLine(x.links)}
+            </div>
+            <span class="tag ${x.tag}">${TAG_LABEL[x.tag]}</span>
+          </div>
+        </div>`).join("")}
+      </div>
+      <div class="spare">${g.spare}</div>`).join("")}`;
+
+  const total = sumCost(DAYS.flatMap((d) => d.items));
+  document.getElementById("budget").innerHTML = `
+    <div class="b-label">예상 경비 · 1인</div>
+    <div class="b-amount">${range(total.min, total.max)}</div>
+    <div class="b-note">가격이 정해진 항목 합산${total.tbd ? ` · 식당 미정 식사 ${total.tbd}끼는 별도` : ""} · 일부는 추정</div>
+    <div class="b-note">2일차 저녁을 대안 1 초로마츠로 바꾸면 약 +¥1,000~4,000, 대안 2 아마미차야면 약 ¥100~460 줄어듦</div>
+    <div class="b-note">숙박 · 항공 · 렌터카 · 주유 · 통행료 · 주차 · 음료 · 기념품 제외</div>`;
+
+  // 여행 기간 중이면 오늘 일정과 현재 시간대를 강조 (현지 시간 기준)
+  function markNow() {
+    const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Tokyo" }));
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    const mins = now.getHours() * 60 + now.getMinutes();
+
+    document.querySelectorAll(".daynav a").forEach(a => a.classList.toggle("today", a.dataset.date === today));
+    document.querySelectorAll(".row.now").forEach(r => r.classList.remove("now"));
+
+    const day = DAYS.find(d => d.date === today);
+    if (!day) return null;
+    const rows = document.querySelectorAll(`.card[data-date="${today}"] .row`);
+    let current = null;
+    day.items.forEach(([time, , , , , , cost], idx) => {
+      if (cost?.alt) return;
+      let [start, end] = times(time);
+      if (end != null && end < start) end += 24 * 60; // 자정을 넘기는 이동
+      const next = day.items[idx + 1] ? times(day.items[idx + 1][0])[0] : start + 60;
+      if (mins >= start && mins < (end ?? Math.max(next, start + 30))) current = rows[idx];
+    });
+    if (current) current.classList.add("now");
+    return document.getElementById(day.id);
+  }
+
+  const todaySection = markNow();
+  if (todaySection && !location.hash) todaySection.scrollIntoView();
+  setInterval(markNow, 60000);
+</script>
+</body>
+</html>

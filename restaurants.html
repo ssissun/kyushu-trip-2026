@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>식당 후보</title>
+<style>
+  :root {
+    --bg: #F6F1EA; --surface: #FFFDF9; --surface-2: #FBF6EF; --ink: #22201C; --ink-2: #5E574D; --ink-3: #958B7E;
+    --line: #E6DDD0; --accent: #C8502D; --accent-soft: #F6E2D8; --link: #A9431F;
+    --code-bg: #F1E9DD; --shadow: 0 1px 2px rgba(40,30,20,.05), 0 6px 20px rgba(40,30,20,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17161A; --surface: #212024; --surface-2: #26252A; --ink: #EFEAE3; --ink-2: #B9B1A6; --ink-3: #847C72;
+      --line: #34323A; --accent: #EE7C55; --accent-soft: #3A2620; --link: #F09A78; --code-bg: #2C2A30; --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17161A; --surface: #212024; --surface-2: #26252A; --ink: #EFEAE3; --ink-2: #B9B1A6; --ink-3: #847C72;
+    --line: #34323A; --accent: #EE7C55; --accent-soft: #3A2620; --link: #F09A78; --code-bg: #2C2A30; --shadow: none;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+    font-size: 15.5px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  .layout { max-width: 1400px; margin: 0 auto; padding: 0 16px 80px; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 36px; }
+  header.hero { grid-column: 1 / -1; padding: 40px 0 8px; }
+  .eyebrow { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  .hero h1 { margin: 8px 0 6px; font-size: clamp(26px, 5vw, 36px); line-height: 1.25; letter-spacing: -.02em; }
+  .hero .back { display: inline-block; margin-top: 8px; font-size: 14px; color: var(--link); text-decoration: none; font-weight: 600; }
+
+  nav.toc { position: sticky; top: 16px; align-self: start; max-height: calc(100vh - 32px); overflow: auto;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 12px; box-shadow: var(--shadow); font-size: 13.5px; }
+  nav.toc .toc-title { font-weight: 800; font-size: 12px; letter-spacing: .1em; color: var(--ink-3); margin: 0 6px 8px; }
+  nav.toc ul { list-style: none; margin: 0; padding: 0; }
+  nav.toc ul ul { padding-left: 12px; margin: 2px 0 6px; border-left: 1px solid var(--line); }
+  nav.toc a { display: block; padding: 3px 6px; border-radius: 6px; color: var(--ink-2); text-decoration: none; line-height: 1.4; }
+  nav.toc > ul > li > a { font-weight: 700; color: var(--ink); margin-top: 4px; }
+  nav.toc a:hover, nav.toc a.active { background: var(--accent-soft); color: var(--accent); }
+  details.toc-mobile { display: none; }
+
+  main { min-width: 0; }
+  main h2 { font-size: 23px; margin: 44px 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--line); letter-spacing: -.01em; }
+  main h2:first-child { margin-top: 8px; }
+  main h3 { font-size: 18px; margin: 30px 0 10px; }
+  main h4 { font-size: 15.5px; margin: 22px 0 8px; color: var(--ink-2); }
+  main p { margin: 10px 0; }
+  main ul { padding-left: 22px; margin: 8px 0; }
+  main li { margin: 3px 0; }
+  main li::marker { color: var(--ink-3); }
+  main li.task { list-style: none; margin-left: -20px; }
+  main li.task input { margin-right: 6px; accent-color: var(--accent); }
+  main a { color: var(--link); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--link) 35%, transparent); }
+  main a:hover { border-bottom-color: var(--link); }
+  main strong { color: var(--ink); }
+  main code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .88em; background: var(--code-bg); padding: 1px 6px; border-radius: 5px; }
+  main hr { border: 0; border-top: 1px dashed var(--line); margin: 36px 0; }
+  main blockquote { margin: 14px 0; padding: 12px 16px; background: var(--accent-soft); border-left: 4px solid var(--accent); border-radius: 0 10px 10px 0; color: var(--ink); }
+  main blockquote p { margin: 0; }
+
+  .table-wrap { overflow-x: auto; margin: 12px 0 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 1.5; }
+  th, td { padding: 9px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+  th { background: var(--surface-2); font-size: 12.5px; color: var(--ink-2); font-weight: 700; white-space: nowrap; position: sticky; top: 0; }
+  tr:last-child td { border-bottom: 0; }
+  tbody tr:hover td { background: var(--surface-2); }
+  table.wide { min-width: 1180px; }
+  td:last-child a { white-space: nowrap; }
+
+  .totop { position: fixed; right: 16px; bottom: 16px; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--accent); color: #fff; text-decoration: none; font-weight: 800; box-shadow: var(--shadow); }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; gap: 0; }
+    nav.toc { display: none; }
+    details.toc-mobile { display: block; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; margin: 8px 0 4px; }
+    details.toc-mobile summary { font-weight: 700; cursor: pointer; }
+    details.toc-mobile ul { list-style: none; padding-left: 10px; margin: 6px 0; font-size: 14px; }
+    details.toc-mobile a { color: var(--ink-2); text-decoration: none; line-height: 1.9; }
+    body { font-size: 15px; }
+    table { font-size: 13px; }
+  }
+  @media print {
+    nav.toc, details.toc-mobile, .totop, .hero .back { display: none; }
+    .layout { grid-template-columns: 1fr; }
+    body { background: #fff; }
+    .table-wrap { box-shadow: none; overflow: visible; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <header class="hero">
+    <div class="eyebrow">Kyushu Trip · Research</div>
+    <h1>식당 후보 — 2일차 점심 · 저녁 · 3일차 점심</h1>
+    <a class="back" href="fukuoka-trip.html">← 일정표 보기</a>
+    <a class="back" href="reservations.html" style="margin-left:14px">예약 체크리스트 →</a>
+    <details class="toc-mobile"><summary>목차</summary><div class="toc">
+<ul>
+<li><a href="#5-식당-후보">5. 식당 후보</a><ul>
+<li><a href="#51-2일차-점심-115-목">5.1 2일차 점심 (11/5 목)</a></li>
+<li><a href="#52-2일차-저녁-115-목">5.2 2일차 저녁 (11/5 목)</a></li>
+<li><a href="#53-3일차-점심-116-금-유후인">5.3 3일차 점심 (11/6 금, 유후인)</a></li>
+<li><a href="#54-조합-예시">5.4 조합 예시</a></li>
+<li><a href="#55-확정-a-루트-스시-1회-3끼-합계-1인-약-1만-엔-일행-4명">5.5 확정: A 루트 (스시 1회, 3끼 합계 1인 약 1만 엔, 일행 4명)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</details>
+  </header>
+  <nav class="toc" aria-label="목차"><div class="toc-title">목차</div><div class="toc">
+<ul>
+<li><a href="#5-식당-후보">5. 식당 후보</a><ul>
+<li><a href="#51-2일차-점심-115-목">5.1 2일차 점심 (11/5 목)</a></li>
+<li><a href="#52-2일차-저녁-115-목">5.2 2일차 저녁 (11/5 목)</a></li>
+<li><a href="#53-3일차-점심-116-금-유후인">5.3 3일차 점심 (11/6 금, 유후인)</a></li>
+<li><a href="#54-조합-예시">5.4 조합 예시</a></li>
+<li><a href="#55-확정-a-루트-스시-1회-3끼-합계-1인-약-1만-엔-일행-4명">5.5 확정: A 루트 (스시 1회, 3끼 합계 1인 약 1만 엔, 일행 4명)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+  <main>
+<ul>
+<li><strong>조사일</strong>: 2026-10-28 · 원본: <code>travel-research.md</code> 5장 (5.1~5.5)</li>
+</ul>
+<h2 id="5-식당-후보">5. 식당 후보</h2>
+<p><strong>조사 기준</strong></p>
+<ul>
+<li>타베로그(일본 현지인 평점)와 구글 평점(여행자 평점)이 모두 좋은 곳</li>
+<li>그날 요일에 영업하는 것을 확인</li>
+</ul>
+<p><strong>평점 출처</strong></p>
+<ul>
+<li>2일차 점심의 구글 평점: 구글 지도에서 직접 가져온 값</li>
+<li>2일차 저녁·3일차 점심의 구글 평점: Wanderlog(구글 평점을 옮겨 보여주는 사이트) 경유. 시점 차이가 있을 수 있습니다.</li>
+</ul>
+<p><strong>직접 다시 확인한 정보</strong></p>
+<ul>
+<li>そむり, れん: 타베로그 영업시간</li>
+<li>湯の岳庵: 공식 영업시간</li>
+<li>甘味茶屋: 공식 휴무 공지</li>
+</ul>
+<p><strong>예약 방법</strong></p>
+<ul>
+<li>⚠️ 이 문서의 "온라인 예약 / 전화 접수 중단" 표기는 타베로그 영문 페이지를 요약한 결과라 <strong>실제 온라인 예약 버튼 여부와 다를 수 있습니다.</strong> 사용자 확인 결과 타베로그 온라인 예약이 되는 곳은 <strong>チョロ松</strong>뿐이었고, 무사시자 · 大和田鮨 · 東洋軒 · 甘味茶屋는 전화번호만 있습니다.</li>
+<li>대행 예약 확인 (10/28, 사이트 직접 열어 봄): 무사시자는 <a href="https://mimitable.com/restaurants/124d0fc6-79c6-4b48-8b3b-6c6e1ccb2dfa?lng=ko" target="_blank" rel="noopener">미미테이블 본점 페이지</a>(渡辺通5-5-12, 4~7일 전 수락률 73%)와 <a href="https://autoreserve.com/ko/restaurants/bhSWFWZzQFXRyox7n517" target="_blank" rel="noopener">AutoReserve</a>에서 예약 가능 (미미테이블에는 바로 옆 渡辺通5-5-15의 "은메달(2호점)" 페이지가 따로 있으니 헷갈리지 않기) · 大和田鮨는 <a href="https://mimitable.com/restaurants/c4441f84-1e09-4860-a807-58d2b69776de?lng=ko" target="_blank" rel="noopener">미미테이블</a>에서 예약 신청 가능 (수락률 8~14일 전 58% → 4~7일 전 37%, 일찍 신청할수록 유리), AutoReserve는 "예약 대행 불가" · 미미테이블 방식: 예약금 결제 후 신청 → 가게 확인 후 최대 1일 안에 확정, 거절 시 전액 환불, 취소 시 4일 전 100% / 3일 전 50% / 2일 전~당일 환불 없음 · 東洋軒은 <a href="https://www.byfood.com/restaurant/toriten-hassho-no-mise-restaurant-toyoken-7644" target="_blank" rel="noopener">byFood</a>에서 "자리만 예약" 요청 가능 (1건당 ¥1,500, 1주일 전까지 무료 취소. 단 공식 규칙은 자리만 예약 불가라 거절될 수 있음) · 甘味茶屋는 AI 전화 예약이라 대행 불필요. 미미테이블 예약금 금액은 로그인 전이라 확인하지 못했습니다.</li>
+</ul>
+<p><strong>"1인" 가격에 대해</strong></p>
+<ul>
+<li>2026-10-28에 <strong>각 식당의 대표 메뉴 가격 기준으로 전부 다시 계산</strong>했습니다. 처음에 쓴 타베로그 예산대는 실제보다 낮았습니다.</li>
+<li>모두 <strong>술을 뺀 금액</strong>입니다. 소프트드링크는 1잔 ¥300~800 정도를 더하세요 (음료 가격은 대부분 확인 못 함).</li>
+<li>괄호 안에 가격 출처와 날짜를 적었습니다. 공식 메뉴가 아닌 리뷰·가이드 기사 가격은 그 사이 올랐을 수 있습니다.</li>
+<li>일본에는 메뉴 가격이 세금 별도인 곳, お通し(자릿세 겸 기본 안주)나 서비스료가 붙는 곳이 있어서 해당되면 따로 적었습니다.</li>
+</ul>
+<h3 id="51-2일차-점심-115-목">5.1 2일차 점심 (11/5 목)</h3>
+<p><strong>핵심</strong>: 벳푸역 앞 北浜 지역은 白池地獄 → 우미타마고로 가는 <strong>길 위에 있습니다</strong>.</p>
+<ul>
+<li>白池에서 北浜까지 약 19분, 北浜에서 우미타마고까지 약 7분입니다.</li>
+<li>白池에서 우미타마고로 바로 가도 약 25분이라, 北浜에 들러도 거의 돌아가지 않습니다.</li>
+<li>우미타마고 바로 옆에는 수족관 안 푸드코트(구글 2.9)뿐이라 추천하지 않습니다.</li>
+</ul>
+<div class="table-wrap"><table class="wide">
+<thead>
+<tr>
+<th>식당</th>
+<th>메뉴</th>
+<th>타베로그 / 구글</th>
+<th>1인 (대표 메뉴 기준, 술 제외)</th>
+<th>영업 (목)</th>
+<th>예약</th>
+<th>위치 / 주차</th>
+<th>링크</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>豊後牛ステーキの店 そむり 別府本店</strong> (소무리)</td>
+<td>분고규 스테이크</td>
+<td>3.75 (484) / 4.3 (774)</td>
+<td><strong>분고규 코스 ¥8,900~17,800</strong> (서로인 120g ¥8,900 · 안심 120g ¥10,000). 일반 스테이크 런치 ¥3,600~5,200, 그 밖의 런치 ¥1,800~ (공식, 세금 포함)</td>
+<td>11:30~14:00 (LO 13:30). 월 휴무</td>
+<td>온라인. 10분 늦으면 자동 취소</td>
+<td>北浜1-4-28 2층. 제휴 주차장 점심 1시간 무료</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440202/44003334/" target="_blank" rel="noopener">타베로그</a> · <a href="https://somuri.net/" target="_blank" rel="noopener">공식</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=そむり+別府本店" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>大和田鮨</strong> (오와다즈시)</td>
+<td>스시. 関あじ·関さば</td>
+<td>3.66 (696) / 4.1 (942)</td>
+<td><strong>¥5,500~6,000</strong>. 銀扇 니기리 10관 ¥4,950 (<strong>세금 별도</strong>) + 세금. 점심에도 お通し가 붙는지는 확인 못 함 (리뷰 영수증 2026-06)</td>
+<td>11:30~14:00. 월·화 휴무, 비정기 휴무</td>
+<td>전화 0977-21-0263</td>
+<td>北浜1-1-3. 주차 3대 + 근처 코인 주차장</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440202/44000628/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=大和田鮨+別府" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>別府甘味茶屋</strong> (벳푸 칸미차야)</td>
+<td>だんご汁 (향토 수제비 국)</td>
+<td>3.58 (629) / 4.3 (2,334)</td>
+<td><strong>¥1,400~1,800</strong>. ふるさと定食 (だんご汁·やせうま·とり天) ¥1,540, だんご汁定食 ¥1,290~1,400 (공식, 세금 포함)</td>
+<td>10:00~21:00 (LO 20:30). 정기 휴무 없음</td>
+<td>AI 전화(050-1726-1858) 순번 예약. 평일 1주일 이내만 가능</td>
+<td>実相寺, 白池에서 5분. 주차 30대 +</td>
+<td><a href="https://tabelog.com/oita/A4402/A440202/44000026/" target="_blank" rel="noopener">타베로그</a> · <a href="https://amamichaya.greater.jp/" target="_blank" rel="noopener">공식</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=別府甘味茶屋" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>とり天発祥の店 レストラン東洋軒</strong> (도요켄)</td>
+<td>토리텐 원조</td>
+<td>3.49 (1,580) / 4.3 (4,787)</td>
+<td><strong>¥1,500~1,750</strong>. 本家とり天定食 ¥1,472~1,750 (타베로그 2024-10 / 가이드 2026-09, 출처마다 다름)</td>
+<td>11:00~15:30 (LO 15:00). 둘째 화요일 휴무</td>
+<td>점심 예약 불가</td>
+<td>石垣東, 白池에서 10분. 주차 60대</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440202/44000534/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=レストラン東洋軒+別府" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>お食事処 とよ常 本店</strong> (토요츠네)</td>
+<td>특상 텐동, 관사바 정식</td>
+<td>3.49 (908) / 4.2 (4,773)</td>
+<td><strong>¥1,000~3,300</strong>. 特上天丼 ¥990, 関サバ·関アジ 회 각 ¥2,200, とよ常御膳 ¥2,350. 天丼 + 関サバ 회면 약 ¥3,200 (타베로그 2024-12 / 가이드 2026-09)</td>
+<td>11:00~21:00 (LO 20:00). 화·수 휴무</td>
+<td>불가</td>
+<td>北浜2-12-24. 주차 있음. <strong>역 앞 지점은 임시 휴업 표시라 본점으로</strong></td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440202/44000199/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=とよ常+本店+別府" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>亀正くるくる寿司</strong> (카메쇼)</td>
+<td>회전초밥. 関あじ·関さば</td>
+<td>3.71 (925) / 4.2 (3,739)</td>
+<td><strong>¥3,500~5,000</strong> (추정). 関あじ·関さば 약 ¥550/접시(2점), 일반 접시 ¥200~550, <strong>세금 별도</strong>. 10~12접시 기준 (블로그 2026-08)</td>
+<td>11:00~21:00. 화·수 휴무, 재료 소진 시 마감</td>
+<td>불가. 07:30부터 대기판에 이름 적기, 대기 1~2.5시간</td>
+<td>実相寺. 현금만 받는다는 리뷰 있음</td>
+<td><a href="https://tabelog.com/oita/A4402/A440202/44000985/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=亀正くるくる寿司" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>地獄蒸し工房 鉄輪</strong> (지고쿠무시 코보)</td>
+<td>온천 증기로 쪄 먹는 체험</td>
+<td>3.49 (621) / 3.9 (3,970)</td>
+<td><strong>¥2,200~2,800</strong>. 海鮮セット ¥1,700 + 채소 + 찜솥 사용료 (소형 ¥400/15분, 2인 나눔) (가이드 2026-09). 10/1 메뉴 개정으로 바뀌었을 수 있음</td>
+<td>10:00~19:00 (LO 18:00). 셋째 수요일 휴무, 11/18 휴관</td>
+<td>불가, 번호표</td>
+<td>白池에서 1분. 무료 주차 31대</td>
+<td><a href="https://tabelog.com/oita/A4402/A440202/44004949/" target="_blank" rel="noopener">타베로그</a> · <a href="https://jigokumushi.com/" target="_blank" rel="noopener">공식</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=地獄蒸し工房+鉄輪" target="_blank" rel="noopener">지도</a></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>그 밖의 대안 (목요일 점심 영업)</strong></p>
+<ul>
+<li><strong>手のべ冷麺 六盛</strong> (벳푸 냉면): 3.49 / 3.9. 11:30~14:00 (LO 13:30), 예약 불가. <strong>1인 ¥990~1,100</strong> (冷麺 ¥990, 가이드 2026-09)<ul>
+<li><a href="https://tabelog.com/oita/A4402/A440202/44000203/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=六盛+松原本店+別府" target="_blank" rel="noopener">지도</a></li>
+</ul>
+</li>
+<li><strong>胡月</strong> (냉면): 3.49 / 3.8. 11:00~17:30, 재료 소진 시 마감. <strong>1인 ¥750~1,050</strong> (別府冷麺 ¥750, 세금 포함)<ul>
+<li><a href="https://tabelog.com/oita/A4402/A440202/44000594/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=胡月+別府+冷麺" target="_blank" rel="noopener">지도</a></li>
+</ul>
+</li>
+<li><strong>海鮮いづつ</strong> (복어·해산물): 3.56 / 3.8. 점심 11:00~15:00, 예약 불가, 주차장 없음. <strong>점심 1인 ¥1,400</strong> (海鮮丼定食, 가이드 2026-09)<ul>
+<li><a href="https://tabelog.com/en/oita/A4402/A440202/44004374/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=海鮮いづつ+別府" target="_blank" rel="noopener">지도</a></li>
+</ul>
+</li>
+<li><strong>茶寮 森澤</strong> (일식·향토요리): 3.57 / 4.0. 점심 11:00~14:00, 예약 가능. 주소가 사이트마다 달라 확인 필요 (핫페퍼는 扇山町21-12). 화요일 휴무, 카드 불가. <strong>점심 1인 ¥2,000~3,800</strong> (季節御膳 ¥2,000은 20식 한정·전날 17시까지 예약, 豊後牛炙りステーキ御膳 ¥3,800, 핫페퍼 2026-10)<ul>
+<li><a href="https://tabelog.com/oita/A4402/A440202/44000103/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=茶寮+森澤+別府" target="_blank" rel="noopener">지도</a></li>
+</ul>
+</li>
+<li><strong>グリルみつば</strong> (스테이크): 3.47 / 3.9. 北浜, 예약 가능. <strong>1인 ¥5,200~6,500</strong> (豊後牛 철판구이 로스 100g ¥5,200 + 밥, 추정 포함). ビーフカツ면 ¥2,100~2,500 (가이드 2026-09)<ul>
+<li>타베로그 링크 확인 못 함 · <a href="https://www.google.com/maps/search/?api=1&amp;query=グリルみつば+別府" target="_blank" rel="noopener">지도</a></li>
+</ul>
+</li>
+</ul>
+<p><strong>추천</strong></p>
+<ul>
+<li><strong>そむり 12:00 예약 (식사 75~90분)</strong>: 11:40 白池 출발 → 13:15 식사 종료 → 13:22 우미타마고 도착. 현재 일정과 거의 그대로 맞습니다.</li>
+<li>다른 고급 선택: 大和田鮨 (같은 동선)</li>
+<li>향토 맛 위주: 甘味茶屋는 지옥 투어 직후 11:30, 東洋軒은 가는 길 중간</li>
+<li>亀正는 맛 평가는 최상위지만 아침 대기 명단과 긴 대기가 필요해 이번 일정에는 맞지 않습니다.</li>
+<li><strong>벳푸 맛 두 가지를 다 원할 때</strong>: 11:30 甘味茶屋 → 13:15 이후 六盛 냉면. 이 경우 우미타마고 도착이 약 13:45로 30분 늦어집니다.</li>
+</ul>
+<h3 id="52-2일차-저녁-115-목">5.2 2일차 저녁 (11/5 목)</h3>
+<p>호텔에서 걸어서 갈 수 있는 곳 위주입니다. 차를 쓰지 않으니 술도 마실 수 있습니다.</p>
+<div class="table-wrap"><table class="wide">
+<thead>
+<tr>
+<th>식당</th>
+<th>메뉴</th>
+<th>타베로그 / 구글</th>
+<th>1인 (대표 메뉴 기준, 술 제외)</th>
+<th>영업 (목)</th>
+<th>예약</th>
+<th>호텔에서</th>
+<th>링크</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>海鮮居酒屋 れん</strong> (렌)</td>
+<td>関あじ·関さば 회 해산물 이자카야. 이자카야 百名店 3년 연속</td>
+<td>3.71 (294) / 확인 못 함</td>
+<td><strong>¥5,500~7,500</strong> (2인이 나눠 먹으면 ¥4,000~5,500, 추정). 関アジ 회 ¥1,980, 関サバ 회 ¥1,780, 大分とり天 ¥890 (리뷰 사진 2026-06). <strong>현금만</strong> (카드·전자화폐 불가)</td>
+<td>월~목 17:30~22:00, 금·토 ~22:30. 일 휴무</td>
+<td><strong>예약 필수</strong>, 전화 0977-22-1722 (온라인 예약 버튼은 확인 못 함)</td>
+<td>도보 6분 (駅前町7-16)</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440202/44006244/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=海鮮居酒屋+れん+別府" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>たつのや</strong> (타츠노야, 1949년 창업)</td>
+<td>스시·갓포. 大分体験コース, <strong>10~3월 복어 코스 13,200엔</strong></td>
+<td>3.52 (87) / 4.4 (128)</td>
+<td><strong>복어 코스 약 ¥14,600</strong> (¥13,200 + 서비스료 5% + 음료 2잔). 전체 코스 ¥8,800~16,500 → 약 ¥9,600~17,700 (타베로그 코스)</td>
+<td>월~토 18:00~22:00. 일·공휴일 다음 날 휴무 (11/3 공휴일 다음 날은 수요일이라 목요일 영업)</td>
+<td>온라인 권장. 전화 0977-22-2248</td>
+<td>도보 8~9분 (駅前町2-4)</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440202/44001773/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=たつのや+別府+寿司" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>大和田鮨</strong> (오와다즈시)</td>
+<td>스시</td>
+<td>3.66 (696) / 4.1 (924)</td>
+<td><strong>¥6,800~8,500</strong>. 銀扇 니기리 ¥4,950 (<strong>세금 별도</strong>) + お通し ¥450 + 단품·음료 (리뷰 영수증 2026-06, 단품·음료는 추정)</td>
+<td>수~일 17:00~21:00. 월·화 휴무</td>
+<td>전화 0977-21-0263 (타베로그 온라인 예약 없음, 사용자 확인). 결제: 타베로그는 카드 가능, 이전 조사는 현금만 → 확인 필요</td>
+<td>도보 6분</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440202/44000628/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=大和田鮨+別府" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>豊後牛ステーキの店 そむり</strong> (소무리)</td>
+<td>분고규 스테이크 코스</td>
+<td>3.75 (484) / 4.3 (744)</td>
+<td><strong>분고규 코스 ¥8,900~17,800</strong> (공식, 세금 포함). 일반 안심 페퍼 스테이크 ¥5,500~</td>
+<td>17:30~21:30 (LO 20:30, 공식). 월요일·수요일 저녁 휴무</td>
+<td>온라인. 15분 늦으면 자동 취소</td>
+<td>도보 3~4분</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440202/44003334/" target="_blank" rel="noopener">타베로그</a> · <a href="https://somuri.net/" target="_blank" rel="noopener">공식</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=そむり+別府本店" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>チョロ松</strong> (초로마츠)</td>
+<td>りゅうきゅう, 오리 소바, 豚天 등 향토요리 이자카야</td>
+<td>3.52 (423) / 3.9 (321)</td>
+<td><strong>¥5,000~5,500</strong> (서비스료 비율 확인 못 함). りゅうきゅう ¥700~1,000, 豚天 ¥500, 唐揚げ ¥1,000, 오리 소바 ¥1,600 (타베로그 2025-03 / 핫페퍼 2026-06). 2차로 가볍게면 ¥2,800~3,000</td>
+<td>17:30~23:00 (LO 22:30). 수·셋째 화 휴무</td>
+<td>온라인</td>
+<td>도보 4분</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440202/44000327/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=チョロ松+別府" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>お食事処 とよ常 本店</strong></td>
+<td>텐동, 토리텐</td>
+<td>3.49 (908) / 4.2 (4,720)</td>
+<td><strong>¥1,000~3,300</strong> (점심과 같음). 特上天丼 ¥990, 関サバ·関アジ 회 각 ¥2,200</td>
+<td>11:00~21:00 (LO 20:00). 화·수 휴무</td>
+<td>불가</td>
+<td>도보 2~3분</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440202/44000199/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=とよ常+本店+別府" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>レストラン東洋軒</strong></td>
+<td>토리텐 원조</td>
+<td>3.49 (1,580) / 4.2~4.3</td>
+<td><strong>¥1,500~3,000</strong>. 本家とり天定食, 또는 とり天 단품 ¥1,100~1,178 + 요리 1개 + 밥 (추정 포함). 서비스료 없음</td>
+<td>저녁 17:00~22:00 (LO 21:00)</td>
+<td>4명 이상 코스만 예약 가능. <strong>2명은 예약 없이</strong></td>
+<td>택시 8~10분</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440202/44000534/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=レストラン東洋軒+別府" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>海鮮いづつ</strong></td>
+<td>복어·해산물 이자카야</td>
+<td>3.56 (745) / 3.8 (1,585)</td>
+<td><strong>¥3,500~5,000</strong> (2인 나눔, 추정). 関あじ 회 ¥3,300, りゅうきゅう ¥880, とり天 ¥880 (가이드 2026-09). 복어는 별도, 가격 확인 못 함</td>
+<td>18:00~21:30 (LO 21:00). 월 휴무</td>
+<td>저녁만, 방법은 확인 필요</td>
+<td>도보 5분</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440202/44004374/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=海鮮いづつ+別府" target="_blank" rel="noopener">지도</a></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>제외</strong></p>
+<ul>
+<li><strong>焼肉 一力</strong>: 목요일 휴무</li>
+<li><strong>冷麺 胡月</strong>: 17:30쯤 닫음</li>
+<li><strong>肴鶏魚 Miiima</strong>: 인스타그램 DM으로만 예약받고 영업시간을 확인하지 못함</li>
+</ul>
+<p><strong>추천</strong></p>
+<ul>
+<li><strong>18:00 れん, 2~2.5시간</strong>: 현지인 평가가 가장 탄탄합니다. 지금 바로 온라인 예약하세요.</li>
+<li><strong>고급 코스</strong>: たつのや 복어 + 関もの 코스. 11월은 복어 제철입니다.</li>
+<li><strong>2차</strong>: チョロ松(23시까지)에서 りゅうきゅう나 오리 소바로 마무리</li>
+<li>히로카도는 11/5 저녁 자리가 없습니다 (§4).</li>
+</ul>
+<h3 id="53-3일차-점심-116-금-유후인">5.3 3일차 점심 (11/6 금, 유후인)</h3>
+<p>저녁이 료칸 코스 요리라서 점심은 너무 무겁지 않게 드시는 편을 권합니다. 유후인 시내는 <strong>주차가 가장 큰 문제</strong>입니다. 긴린코와 유노츠보 거리에는 전용 주차장이 없고 소규모 유료 주차장만 있어 단풍철에는 만차가 잦습니다.</p>
+<div class="table-wrap"><table class="wide">
+<thead>
+<tr>
+<th>식당</th>
+<th>메뉴</th>
+<th>타베로그 / 구글</th>
+<th>1인 (대표 메뉴 기준, 술 제외)</th>
+<th>영업 (금)</th>
+<th>예약</th>
+<th>위치 / 주차</th>
+<th>링크</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>湯の岳庵</strong> (유노다케안, 亀の井別荘 안)</td>
+<td>숯불 분고규 스테이크 덮밥, 계절 정식</td>
+<td>3.74 (310) / 4.3 (786~877)</td>
+<td><strong>¥3,630~3,960</strong>. 炭火焼ビフテキ丼 ¥3,630, ステーキ膳 ¥3,960. 가볍게: そば御膳 ¥2,500 (평일), 冠地鶏焼膳 ¥2,970 (블로그 2024~2025)</td>
+<td>11:00~21:00 (LO). 연 2회 정도 비정기 휴무 (공식)</td>
+<td><strong>예약 가능</strong>. 전화 0977-84-2970 또는 온라인</td>
+<td>긴린코 바로 옆. 주차 있음</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440201/44000042/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.kamenoi-bessou.jp/facility/yunotakean/" target="_blank" rel="noopener">공식</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=湯の岳庵+由布院" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>Murata 不生庵</strong> (후쇼안)</td>
+<td>오리 せいろ 소바, 지도리 토리텐</td>
+<td>3.48 (230) / 4.1 (약 421)</td>
+<td><strong>¥3,400</strong>. 黒豚蕎麦 ¥2,300 + 冠地鶏 鳥天 ¥1,100. 가볍게: 소바만 ¥1,200~2,300 (리뷰 2025-09)</td>
+<td>11:00~16:00 (LO 15:30). 화 휴무</td>
+<td>불가. 1시간 대기 리뷰 있음</td>
+<td>鳥越 언덕, 차로 이동. 주차 약 10대</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440201/44000036/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=不生庵+由布院" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>古式手打ちそば 泉</strong> (이즈미)</td>
+<td>메밀 100% 수타 소바</td>
+<td>3.48 (166) / 4.0 (약 600)</td>
+<td><strong>¥1,980</strong>. 鴨せいろ ¥1,980 (세이로 2장). 가볍게: せいろ ¥1,320~ (리뷰 2024-10, せいろ 가격은 2023)</td>
+<td>평일 11:00~15:00. 비정기 휴무, 재료 소진 시 마감</td>
+<td>불가</td>
+<td>긴린코 호숫가 테라스. 주차 없음</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440201/44000041/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=古式手打ちそば+泉+由布院" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>檪の丘</strong> (쿠누기노오카)</td>
+<td>장작 화덕 나폴리 피자</td>
+<td>3.67 (661) / 4.3 (약 1,458)</td>
+<td><strong>¥1,785~2,145</strong> (피자 1판). 마르게리타 ¥1,785, 부팔라 ¥2,145. 2인이 피자 + 고기 요리 1개를 나누면 ¥2,500~3,500 (타베로그 메뉴 2026-07)</td>
+<td>11:00~15:00 (LO 14:30). 수 휴무</td>
+<td>점심 예약 불가</td>
+<td>湯布院IC에서 1분, 료칸 가는 길목. 주차 있음</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440201/44000453/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=檪の丘+由布院" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>菊すけ</strong> (기쿠스케)</td>
+<td>산초 카레 우동</td>
+<td>3.54 (157) / 4.6 (약 668)</td>
+<td><strong>¥1,595~2,000</strong>. 山椒カレーうどん 赤 ¥1,595 (밥·스무디 포함) (블로그 2025-08)</td>
+<td>11:00~15:00. 화·수 휴무</td>
+<td>불가. 20석</td>
+<td>川上 산 쪽. 주차 있음</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440201/44008319/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=菊すけ+由布院" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>由布まぶし 心 金鱗湖本店</strong> (유후마부시 신)</td>
+<td>분고규·지도리 마부시</td>
+<td>3.49 (258) / 4.1 (약 2,569)</td>
+<td><strong>¥2,850~3,200</strong>. 豊後牛まぶし ¥3,200, 鰻まぶし ¥3,200, 地鶏まぶし ¥2,850 (공식, 세금 포함)</td>
+<td>10:30~18:30 (공식). 비정기 휴무</td>
+<td>평일 점심 불가. 대기 약 1시간</td>
+<td>긴린코 근처. 전용 주차 없음</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440201/44008761/" target="_blank" rel="noopener">타베로그</a> · <a href="https://yufumabushi-shin.com/" target="_blank" rel="noopener">공식</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=由布まぶし+心+金鱗湖本店" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>レストラン 洋灯舎</strong> (요토샤)</td>
+<td>분고규 함박스테이크, 게살 크림 크로켓</td>
+<td>3.51 (107) / 확인 못 함</td>
+<td><strong>¥1,980~3,520</strong>. 豊後牛ハンバーグ 200g ¥1,980, 오이타 와규 철판 스테이크 ¥3,520. 가볍게: 게살 크림 크로켓 ¥1,430 (공식)</td>
+<td>11:00~14:30 (LO 13:50). 화 휴무</td>
+<td>온라인 가능</td>
+<td>긴린코 호숫가. 무료 주차 8대</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440201/44000660/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=洋灯舎+由布院" target="_blank" rel="noopener">지도</a></td>
+</tr>
+<tr>
+<td><strong>ゆふいん山椒郎</strong> (산쇼로)</td>
+<td>일식, 분고규 스테이크 점심</td>
+<td>3.48 (179) / 4.1 (약 370)</td>
+<td><strong>¥2,500~3,630</strong>. 合わせ箱 ¥2,500, 豊後牛ステーキランチ ¥3,630. 가볍게: しぐれ煮丼 ¥1,500 (타베로그 메뉴 2024-06)</td>
+<td>금 11:00~15:00 (LO 14:00). 화·수 휴무</td>
+<td>점심 예약 불가</td>
+<td>역에서 도보 10분. 주차 있음</td>
+<td><a href="https://tabelog.com/en/oita/A4402/A440201/44007612/" target="_blank" rel="noopener">타베로그</a> · <a href="https://www.google.com/maps/search/?api=1&amp;query=ゆふいん山椒郎" target="_blank" rel="noopener">지도</a></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>제외</strong></p>
+<ul>
+<li><strong>玉の湯 葡萄屋</strong>: 점심 휴업 정보가 있음</li>
+<li><strong>草庵秋桜</strong>: 점심 영업 정보 없음</li>
+<li><strong>由布院 甘味茶屋</strong>: 11/4~5 연휴 (11/6은 영업하는지 별도 확인 필요)</li>
+</ul>
+<p><strong>추천</strong></p>
+<ul>
+<li><strong>湯の岳庵 11:30 예약, 75~90분</strong>: 관광객과 현지인 평가가 모두 가장 높고, 예약과 주차가 둘 다 되는 유일한 곳입니다.<ul>
+<li>13:00부터 긴린코 → 유노츠보 거리를 걸어서 둘러보고 14:30쯤 차로 돌아갑니다.</li>
+<li><strong>예약할 때 "식사 후 쇼핑하는 동안 차를 계속 세워 둬도 되는지" 물어보세요.</strong></li>
+</ul>
+</li>
+<li><strong>가볍게</strong>: 泉 소바 (40~50분, 긴린코 동선과 바로 연결)</li>
+<li><strong>늦은 점심</strong>: 쇼핑을 먼저 하고 13:45 檪の丘 (LO 14:30). 료칸 가는 길목이라 동선이 가장 짧습니다.</li>
+<li><strong>히로카도 안 (§4)</strong> 을 고르면 이 식사는 히로카도로 대체됩니다.</li>
+</ul>
+<h3 id="54-조합-예시">5.4 조합 예시</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>안</th>
+<th>2일차 점심</th>
+<th>2일차 저녁</th>
+<th>3일차 점심</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A. 미식 중심</td>
+<td>そむり (분고규)</td>
+<td>れん 또는 たつのや (복어)</td>
+<td>湯の岳庵</td>
+</tr>
+<tr>
+<td>A+. 최고급</td>
+<td>そむり 또는 大和田鮨</td>
+<td>れん 또는 たつのや</td>
+<td><strong>히로카도 12:00</strong> (§4)</td>
+</tr>
+<tr>
+<td>B. 향토 맛 위주</td>
+<td>東洋軒 또는 甘味茶屋</td>
+<td>大和田鮨 + チョロ松 2차</td>
+<td>泉 소바</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>そむり와 大和田鮨는 점심과 저녁 후보에 모두 들어 있습니다. 같은 집이 겹치지 않게 고르세요.</li>
+</ul>
+<h3 id="55-확정-a-루트-스시-1회-3끼-합계-1인-약-1만-엔-일행-4명">5.5 확정: A 루트 (스시 1회, 3끼 합계 1인 약 1만 엔, 일행 4명)</h3>
+<p><strong>조건</strong>: 2일차 점심 · 2일차 저녁 · 3일차 점심 3끼 합계 1인 약 ¥10,000 (음료 제외), 스시 최소 1회, 텐동처럼 아주 기름진 곳 제외 (돈카츠·라멘 정도는 허용).</p>
+<p><strong>비교한 6개 루트</strong> (평점 = 맛·평판 40% + 메뉴 균형 25% + 동선·예약 안정성 20% + 예산 여유 15%)</p>
+<div class="table-wrap"><table class="wide">
+<thead>
+<tr>
+<th>순위</th>
+<th>루트</th>
+<th>2일차 점심</th>
+<th>2일차 저녁</th>
+<th>3일차 점심</th>
+<th>1인 합계</th>
+<th>평점</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>A. 점심 스시 정석 ✅ 선택</strong></td>
+<td>大和田鮨</td>
+<td>東洋軒</td>
+<td>泉</td>
+<td>¥8,300~9,700</td>
+<td>4.3</td>
+</tr>
+<tr>
+<td>2</td>
+<td>D. 예약으로 확실하게</td>
+<td>甘味茶屋</td>
+<td>新鮨し 니기리 8관</td>
+<td>洋灯舎</td>
+<td>¥9,300~9,800</td>
+<td>4.2</td>
+</tr>
+<tr>
+<td>3</td>
+<td>F. 저녁 스시 + 유후인 명소</td>
+<td>六盛 냉면</td>
+<td>大和田鮨</td>
+<td>湯の岳庵 소바 정식</td>
+<td>¥9,400~10,100</td>
+<td>4.2</td>
+</tr>
+<tr>
+<td>4</td>
+<td>B. 가볍게 셋</td>
+<td>六盛 냉면</td>
+<td>新鮨し 니기리 8관</td>
+<td>菊すけ</td>
+<td>¥8,600~9,100</td>
+<td>4.1</td>
+</tr>
+<tr>
+<td>5</td>
+<td>C. 체험 + 스시</td>
+<td>地獄蒸し工房</td>
+<td>大和田鮨</td>
+<td>泉</td>
+<td>¥9,400~10,700</td>
+<td>3.8</td>
+</tr>
+<tr>
+<td>6</td>
+<td>E. 평점 최상위 (도전형)</td>
+<td>東洋軒</td>
+<td>亀正</td>
+<td>湯の岳庵 비프스테이크 덮밥</td>
+<td>¥8,600~10,400</td>
+<td>3.7</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>A 루트 확정 내용</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>식사</th>
+<th>식당</th>
+<th>메뉴 / 1인</th>
+<th>메모</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2일차 점심 12:00</td>
+<td><strong>大和田鮨</strong></td>
+<td>銀扇 니기리 10관 ¥5,500~6,000 (세금 별도 ¥4,950 + 세금)</td>
+<td>4명 전화 예약 (0977-21-0263). 北浜, 수족관 가는 길 위</td>
+</tr>
+<tr>
+<td>2일차 저녁 18:00</td>
+<td><strong>東洋軒</strong></td>
+<td>本家とり天定食 ¥1,500~1,750</td>
+<td>예약은 <strong>코스(¥6,600 / 8,800 / 11,000)만, 대인 4명 이상, 전화 0977-23-3333 또는 방문</strong>으로만 가능하고 ¥6,600·8,800 코스는 2일 전까지 (공식). 단품·자리만·당일 예약은 불가 → 토리텐 정식은 예약 없이 방문, 대기 가능. 전화는 16~17시, 21~22시가 잘 연결됨. 호텔에서 차로 8~10분</td>
+</tr>
+<tr>
+<td>3일차 점심 11:30</td>
+<td><strong>古式手打ちそば 泉</strong></td>
+<td>せいろ ¥1,320 / 鴨せいろ ¥1,980</td>
+<td>예약 불가, 주차장 없음. 긴린코 근처 유료 주차장에 세우고 걸어서</td>
+</tr>
+<tr>
+<td><strong>합계</strong></td>
+<td></td>
+<td><strong>1인 ¥8,320~9,730</strong></td>
+<td>음료 제외</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>2일차 저녁 대안 (튀김이 부담될 때)</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>대안</th>
+<th>메뉴 / 1인</th>
+<th>A 루트 합계</th>
+<th>특징</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>チョロ松</strong> (일정표에 대안 1로 넣음)</td>
+<td>튀김 아닌 향토요리로 주문: りゅうきゅう(양념 회) ¥700~1,000, 오리국·오리 소바 ¥1,400~1,600 등 → 가볍게 ¥2,800~3,000, 넉넉히 ¥5,000~5,500 (서비스료 포함 추정)</td>
+<td>약 ¥9,600~13,500</td>
+<td>호텔에서 <strong>도보 4분</strong>이라 운전할 필요가 없고 술도 마실 수 있습니다. 23시까지 영업, 온라인 예약 가능. 3일차 점심이 소바라 오리 소바보다 오리국(鴨汁)만 시키는 편이 겹치지 않습니다</td>
+</tr>
+<tr>
+<td><strong>別府甘味茶屋</strong> (일정표에 대안 2로 넣음, 메뉴: 당고지루) — 甘味処(단 것을 파는 찻집)이지만 だんご汁 정식 같은 향토 식사도 팝니다 (타베로그 분류: 화과자 카페 · 향토요리 · 카페). 원래 떡집에서 시작</td>
+<td>だんご汁定食 ¥1,290~1,400 (토리텐이 들어간 ふるさと定食은 피하기)</td>
+<td>약 ¥8,100~9,400</td>
+<td>가장 가볍고 저렴하지만, <strong>저녁 식사로는 캐주얼하고 가벼운 편</strong>입니다. 21:00까지 영업 (LO 20:30), 정기 휴무 없음, 주차 30대. 간나와 쪽이라 호텔에서 차로 약 15분 (추정)</td>
+</tr>
+</tbody>
+</table></div>
+  </main>
+</div>
+<a class="totop" href="#" aria-label="맨 위로">↑</a>
+<script>
+  // 현재 읽는 섹션을 목차에서 강조
+  const links = [...document.querySelectorAll("nav.toc a")];
+  const byId = new Map(links.map(a => [decodeURIComponent(a.hash.slice(1)), a]));
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(a => a.classList.remove("active"));
+      byId.get(e.target.id)?.classList.add("active");
+    });
+  }, { rootMargin: "0px 0px -75% 0px" });
+  document.querySelectorAll("main h2[id], main h3[id]").forEach(h => obs.observe(h));
+</script>
+</body>
+</html>

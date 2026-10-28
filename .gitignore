@@ -1,0 +1,7 @@
+# GitHub Pages에는 아래 파일만 올린다 (사진·조사 원본은 제외)
+*
+!.gitignore
+!index.html
+!fukuoka-trip.html
+!reservations.html
+!restaurants.html

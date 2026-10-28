@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>예약 체크리스트</title>
+<style>
+  :root {
+    --bg: #F6F1EA; --surface: #FFFDF9; --ink: #22201C; --ink-2: #5E574D; --ink-3: #958B7E; --line: #E6DDD0;
+    --accent: #C8502D; --accent-soft: #F6E2D8; --warn: #A2780F; --warn-soft: #F5EBD0; --ok: #4C7A4A; --ok-soft: #E3EEDF;
+    --link: #3E6E8E; --shadow: 0 1px 2px rgba(40,30,20,.05), 0 6px 20px rgba(40,30,20,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17161A; --surface: #212024; --ink: #EFEAE3; --ink-2: #B9B1A6; --ink-3: #847C72; --line: #34323A;
+      --accent: #EE7C55; --accent-soft: #3A2620; --warn: #E2B85A; --warn-soft: #3A3120; --ok: #94C48F; --ok-soft: #233024;
+      --link: #8DB8D6; --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17161A; --surface: #212024; --ink: #EFEAE3; --ink-2: #B9B1A6; --ink-3: #847C72; --line: #34323A;
+    --accent: #EE7C55; --accent-soft: #3A2620; --warn: #E2B85A; --warn-soft: #3A3120; --ok: #94C48F; --ok-soft: #233024;
+    --link: #8DB8D6; --shadow: none;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+    font-size: 15.5px; line-height: 1.55; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 32px 16px 56px; }
+  .eyebrow { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  h1 { margin: 6px 0 4px; font-size: clamp(26px, 6vw, 34px); letter-spacing: -.02em; }
+  .meta { color: var(--ink-2); font-size: 14px; }
+  .meta a { color: var(--link); text-decoration: none; font-weight: 600; margin-left: 6px; }
+  .progress { margin-top: 14px; font-size: 14px; color: var(--ink-2); }
+  .progress b { color: var(--accent); }
+
+  h2 { display: flex; align-items: center; gap: 8px; font-size: 18px; margin: 30px 0 4px; }
+  h2 .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .must .dot { background: var(--accent); }
+  .good .dot { background: var(--warn); }
+  .none .dot { background: var(--ok); }
+  .sec-sub { color: var(--ink-3); font-size: 13.5px; margin: 0 0 10px; }
+
+  .item {
+    display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: start;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 14px 12px;
+    margin-bottom: 10px; box-shadow: var(--shadow);
+  }
+  .must .item { border-left: 4px solid var(--accent); }
+  .good .item { border-left: 4px solid var(--warn); }
+  .none .item { border-left: 4px solid var(--ok); }
+  .item input { width: 20px; height: 20px; margin-top: 3px; accent-color: var(--accent); cursor: pointer; }
+  .item.done { opacity: .55; }
+  .item.done .name { text-decoration: line-through; }
+  .when { font-size: 13px; font-weight: 700; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .name { font-size: 17px; font-weight: 700; margin-top: 1px; }
+  .name .jp { font-size: 12.5px; color: var(--ink-3); font-weight: 400; margin-left: 6px; }
+  .why { font-size: 14px; color: var(--ink-2); margin-top: 4px; }
+  .how { margin-top: 8px; font-size: 14px; }
+  .how b { color: var(--ink); }
+  .actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .actions a {
+    font-size: 13px; font-weight: 700; text-decoration: none; border-radius: 999px; padding: 4px 12px;
+    border: 1px solid var(--line); color: var(--link); background: var(--bg);
+  }
+  .actions a.tel { color: #fff; background: var(--accent); border-color: var(--accent); }
+  .actions a.proxy { color: #fff; background: var(--link); border-color: var(--link); }
+  .proxy-note { margin-top: 6px; font-size: 13px; color: var(--ink-2); background: var(--bg); border: 1px dashed var(--line); border-radius: 8px; padding: 6px 10px; }
+  .deadline { display: inline-block; margin-top: 6px; font-size: 12.5px; font-weight: 700; color: var(--accent); background: var(--accent-soft); border-radius: 6px; padding: 2px 8px; }
+
+  .none-list { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 6px 14px; box-shadow: var(--shadow); }
+  .none-list div { padding: 9px 0; border-top: 1px solid var(--line); font-size: 14.5px; }
+  .none-list div:first-child { border-top: 0; }
+  .none-list .jp { font-size: 12.5px; color: var(--ink-3); margin-left: 6px; }
+  .none-list .why { margin-top: 1px; }
+
+  .scripts .dot { background: var(--link); }
+  .script { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; box-shadow: var(--shadow); scroll-margin-top: 16px; }
+  .script .s-title { font-size: 14px; font-weight: 700; color: var(--ink-2); }
+  .script p { margin: 6px 0 0; }
+  .script p[lang="ja"] { font-size: 16px; line-height: 1.7; }
+  .script .ko { font-size: 13.5px; color: var(--ink-2); }
+
+  .foot { margin-top: 28px; font-size: 13px; color: var(--ink-3); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Kyushu Trip · 4명</div>
+  <h1>예약 체크리스트</h1>
+  <div class="meta">2026. 11. 4 (수) — 11. 7 (토) <a href="fukuoka-trip.html">일정표 →</a><a href="restaurants.html">식당 후보 →</a></div>
+  <div class="progress" id="progress"></div>
+
+  <section class="must">
+    <h2><span class="dot"></span>꼭 예약 · 연락</h2>
+    <p class="sec-sub">출발까지 1주일 — 오늘·내일 처리 권장</p>
+
+    <div class="item" data-id="musashiza">
+      <input type="checkbox" aria-label="완료">
+      <div>
+        <div class="when">1일차 11/4 (수) 20:30 · 저녁</div>
+        <div class="name">스미게키죠 무사시자 (원시 화로구이)<span class="jp">すみ劇場 むさし坐</span></div>
+        <div class="why">인기 가게라 4명 자리가 없을 수 있음 · 연락 없이 취소하면 취소료 청구될 수 있음</div>
+        <div class="how"><b>전화</b> (타베로그에 온라인 예약 버튼 없음) 또는 <b>미미테이블 · AutoReserve 대행 예약</b> · 4명 · 20:30</div>
+        <div class="proxy-note">미미테이블 (10/28 확인, <b>본점</b> 渡辺通5-5-12): 예약금 결제 후 신청 → 가게 확인 후 최대 1일 안에 확정, 거절되면 전액 환불 · 4~7일 전 신청 수락률 73% · 취소 시 4일 전 100% / 3일 전 50% / 2일 전~당일 환불 없음 · ⚠️ 옆 가게 "은메달(2호점)" 페이지와 헷갈리지 않기</div>
+        <div class="proxy-note">AutoReserve (10/28 확인): 즉시 예약 / 예약 요청 가능 · 접수는 <b>3일 전 12:30까지</b> · 11/4는 지금 <b>16:00~16:45, 21:00~22:00만</b> 보이고 20:30은 없음</div>
+        <div class="actions"><a class="tel" href="tel:+815055977133">☎ 050-5597-7133</a><a class="proxy" href="https://mimitable.com/restaurants/124d0fc6-79c6-4b48-8b3b-6c6e1ccb2dfa?lng=ko" target="_blank" rel="noopener">미미테이블 (본점)</a><a class="proxy" href="https://autoreserve.com/ko/restaurants/bhSWFWZzQFXRyox7n517" target="_blank" rel="noopener">AutoReserve 대행 예약</a><a href="https://tabelog.com/en/fukuoka/A4001/A400103/40051308/" target="_blank" rel="noopener">타베로그</a><a href="#script-musashiza">전화용 일본어 ↓</a></div>
+        <span class="deadline">AutoReserve 마감 11/1 (일) 12:30 일본 시간</span>
+      </div>
+    </div>
+
+    <div class="item" data-id="owada">
+      <input type="checkbox" aria-label="완료">
+      <div>
+        <div class="when">2일차 11/5 (목) 12:00 · 점심</div>
+        <div class="name">오와다즈시 (스시)<span class="jp">大和田鮨</span></div>
+        <div class="why">13:15에 수족관으로 출발해야 해서 기다릴 여유가 없음 · 4명 좌석 확보</div>
+        <div class="how"><b>전화</b> (타베로그에 온라인 예약 버튼 없음) 또는 <b>미미테이블 대행 예약</b> · 4명 · 12:00</div>
+        <div class="proxy-note">미미테이블 (10/28 확인): 예약금 결제 후 신청 → 가게 확인 후 최대 1일 안에 확정, 거절되면 전액 환불 · 신청 수락률 <b>8~14일 전 58% → 4~7일 전 37%로 떨어짐 → 오늘(10/28) 신청 권장</b> · 취소 시 4일 전 100% / 3일 전 50% / 2일 전~당일 환불 없음 · 미미테이블 표기상 신용카드 결제 · 주차 가능</div>
+        <div class="proxy-note">AutoReserve는 "예약 대행 불가" (10/28 확인)</div>
+        <div class="actions"><a class="tel" href="tel:+81977210263">☎ 0977-21-0263</a><a class="proxy" href="https://mimitable.com/restaurants/c4441f84-1e09-4860-a807-58d2b69776de?lng=ko" target="_blank" rel="noopener">미미테이블 대행 예약</a><a href="https://tabelog.com/en/oita/A4402/A440202/44000628/" target="_blank" rel="noopener">타베로그</a><a href="#script-owada">전화용 일본어 ↓</a></div>
+      </div>
+    </div>
+
+    <div class="item" data-id="baien">
+      <input type="checkbox" aria-label="완료">
+      <div>
+        <div class="when">3일차 11/6 (금) 저녁 · 4일차 11/7 (토) 조식</div>
+        <div class="name">바이엔 료칸 식사 시간 요청<span class="jp">由布院 梅園</span></div>
+        <div class="why">정해진 시간 중에서 골라야 하고, 희망 시간이 안 될 수도 있음</div>
+        <div class="how"><b>저녁 18:00</b> (선택지 18:00 / 19:30) · <b>조식 07:30</b> (선택지 07:30 / 08:00 / 08:30) — 숙소 예약 사이트 메시지 또는 숙소에 연락</div>
+        <div class="actions"><a href="https://www.yufuin-baien.com/" target="_blank" rel="noopener">공식 사이트</a></div>
+      </div>
+    </div>
+
+    <div class="item" data-id="tsuruta">
+      <input type="checkbox" aria-label="완료">
+      <div>
+        <div class="when">1일차 11/4 (수) 밤</div>
+        <div class="name">호텔 뉴 츠루타 늦은 체크인 연락<span class="jp">ホテルニューツルタ</span></div>
+        <div class="why">도착이 자정 넘어 00:10 전후 (낭클을 건너뛰면 23:50 전후)</div>
+        <div class="how">숙소 예약 사이트 메시지 또는 호텔에 연락</div>
+        <div class="actions"><a href="https://www.jalan.net/yad316546/" target="_blank" rel="noopener">잘란</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="good">
+    <h2><span class="dot"></span>예약하면 좋은 곳</h2>
+    <p class="sec-sub">상황에 따라 선택</p>
+
+    <div class="item" data-id="toyoken">
+      <input type="checkbox" aria-label="완료">
+      <div>
+        <div class="when">2일차 11/5 (목) 18:00 · 저녁</div>
+        <div class="name">도요켄 (토리텐 원조)<span class="jp">レストラン東洋軒</span></div>
+        <div class="why"><b>일반 메뉴는 예약 불가</b> (공식) — 예약은 코스(1인 ¥6,600 / 8,800 / 11,000)만, 대인 4명 이상, 전화 또는 방문으로만. 단품 · 자리만 · 당일 예약은 안 됨</div>
+        <div class="how">토리텐 정식이면 예약 없이 방문 (대기 각오) · 기다리기 싫으면 ¥6,600 코스를 <b>2일 전(11/3)까지</b> 전화 예약 (1인 약 +¥5,000, 예산 초과) · 전화는 16~17시, 21~22시가 잘 연결됨</div>
+        <div class="proxy-note">byFood (10/28 확인): "자리만 예약" 요청 가능 · 예약 1건당 수수료 ¥1,500 · 1주일 전까지 무료 취소 — <b>공식 규칙은 "자리만 예약 불가"라 가게가 거절할 수 있음</b></div>
+        <div class="actions"><a class="tel" href="tel:+81977233333">☎ 0977-23-3333</a><a class="proxy" href="https://www.byfood.com/restaurant/toriten-hassho-no-mise-restaurant-toyoken-7644" target="_blank" rel="noopener">byFood 대행 요청</a><a href="https://www.toyoken-beppu.co.jp/" target="_blank" rel="noopener">공식</a><a href="https://tabelog.com/en/oita/A4402/A440202/44000534/" target="_blank" rel="noopener">타베로그</a></div>
+      </div>
+    </div>
+
+    <div class="item" data-id="amami">
+      <input type="checkbox" aria-label="완료">
+      <div>
+        <div class="when">2일차 저녁 대안 2</div>
+        <div class="name">아마미차야 (당고지루)<span class="jp">別府甘味茶屋</span></div>
+        <div class="why"><b>당일 예약 불가</b> · 평일은 1주일 이내만 예약 가능 — 그날 정하면 예약 없이 방문 (가게가 크고 주차 30대)</div>
+        <div class="how">AI 전화 순번 예약</div>
+        <div class="actions"><a class="tel" href="tel:+815017261858">☎ 050-1726-1858</a><a href="https://tabelog.com/en/oita/A4402/A440202/44000026/" target="_blank" rel="noopener">타베로그</a></div>
+        <span class="deadline">미리 한다면 10/29 ~ 11/4</span>
+      </div>
+    </div>
+
+    <div class="item" data-id="choromatsu">
+      <input type="checkbox" aria-label="완료">
+      <div>
+        <div class="when">2일차 저녁 대안 1</div>
+        <div class="name">초로마츠 (향토요리 이자카야)<span class="jp">チョロ松</span></div>
+        <div class="why">저녁 이자카야라 붐빌 수 있음 — 대안으로 정하면 바로 확인</div>
+        <div class="how"><b>타베로그 온라인 예약 가능</b> (사용자 확인)</div>
+        <div class="actions"><a href="https://tabelog.com/en/oita/A4402/A440202/44000327/" target="_blank" rel="noopener">타베로그에서 예약</a></div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="none">
+    <h2><span class="dot"></span>예약 필요 없음</h2>
+    <p class="sec-sub">예약을 받지 않거나 그냥 들르면 되는 곳</p>
+    <div class="none-list">
+      <div><b>낭클 (타코야키)</b><span class="jp">nancle</span><div class="why">1일차 · 선택 · 포장 가게</div></div>
+      <div><b>이즈미 (수타 소바)</b><span class="jp">古式手打ちそば 泉</span><div class="why">3일차 점심 · 예약 불가 · 재료가 떨어지면 일찍 마감 → 11:30 도착이면 무난</div></div>
+      <div><b>사와와 다자이후점 (말차 디저트)</b><span class="jp">茶和々 太宰府店</span><div class="why">4일차 · 9:30 오픈 · 그냥 들르기</div></div>
+    </div>
+  </section>
+
+  <section class="scripts">
+    <h2><span class="dot"></span>전화 예약용 일본어</h2>
+    <p class="sec-sub">한국에서 걸 때는 +81 뒤에 맨 앞 0을 빼고 걸기 (버튼은 이미 변환됨) · 이름은 로마자로 천천히</p>
+
+    <div class="script" id="script-owada">
+      <div class="s-title">오와다즈시 · 11/5 (목) 12:00 · 4명</div>
+      <p lang="ja">もしもし、予約をお願いしたいのですが。<br>11月5日、木曜日の12時に、4名でお願いします。<br>名前は〇〇です。韓国からの旅行者です。<br>クレジットカードは使えますか？</p>
+      <p class="ko">여보세요, 예약하고 싶은데요. 11월 5일 목요일 12시에 4명으로 부탁드립니다. 이름은 ○○입니다. 한국에서 온 여행자입니다. 신용카드 쓸 수 있나요?</p>
+    </div>
+
+    <div class="script" id="script-musashiza">
+      <div class="s-title">스미게키죠 무사시자 · 11/4 (수) 20:30 · 4명</div>
+      <p lang="ja">もしもし、予約をお願いしたいのですが。<br>11月4日、水曜日の20時半に、4名でお願いします。<br>名前は〇〇です。韓国からの旅行者です。</p>
+      <p class="ko">여보세요, 예약하고 싶은데요. 11월 4일 수요일 20시 반에 4명으로 부탁드립니다. 이름은 ○○입니다. 한국에서 온 여행자입니다.</p>
+    </div>
+
+    <div class="script">
+      <div class="s-title">자주 나오는 질문 · 대답</div>
+      <p class="ko"><span lang="ja">お電話番号は？</span> (전화번호는?) → <span lang="ja">韓国の番号で、プラス82の…です</span> (한국 번호로 +82…입니다)<br>
+      <span lang="ja">満席です</span> (만석입니다) → <span lang="ja">では、何時なら空いていますか？</span> (그럼 몇 시라면 자리가 있나요?)<br>
+      <span lang="ja">ありがとうございます。よろしくお願いします。</span> (감사합니다. 잘 부탁드립니다.)</p>
+    </div>
+  </section>
+
+  <p class="foot">예약 조건은 2026-10-28 타베로그·공식 페이지 기준 · 온라인 예약 버튼 여부는 사용자 확인 반영 (초로마츠만 타베로그 온라인 예약 가능) · 대행 예약 사이트는 10/28에 직접 열어 확인 · 미미테이블 예약금 금액은 로그인 전이라 확인 못 함 · 예약 사이트의 실제 빈자리는 확인하지 않았음 · 체크 표시는 이 브라우저에만 저장됨</p>
+</div>
+
+<script>
+  const KEY = "kyushu-trip-reservations";
+  const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } };
+  const save = (s) => { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch {} };
+
+  const state = load();
+  const items = [...document.querySelectorAll(".item")];
+  const progress = document.getElementById("progress");
+  const render = () => {
+    const done = items.filter((el) => el.classList.contains("done")).length;
+    const mustLeft = [...document.querySelectorAll(".must .item")].filter((el) => !el.classList.contains("done")).length;
+    progress.innerHTML = `완료 <b>${done}</b> / ${items.length}` + (mustLeft ? ` · 꼭 할 일 <b>${mustLeft}</b>개 남음` : " · 꼭 할 일 모두 완료 ✓");
+  };
+
+  items.forEach((el) => {
+    const box = el.querySelector("input");
+    box.checked = !!state[el.dataset.id];
+    el.classList.toggle("done", box.checked);
+    box.addEventListener("change", () => {
+      state[el.dataset.id] = box.checked;
+      el.classList.toggle("done", box.checked);
+      save(state);
+      render();
+    });
+  });
+  render();
+</script>
+</body>
+</html>
