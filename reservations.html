@@ -76,10 +76,7 @@
   .none-list .jp { font-size: 12.5px; color: var(--ink-3); margin-left: 6px; }
   .none-list .why { margin-top: 1px; }
 
-  .scripts .dot { background: var(--link); }
-  .blocked .dot { background: var(--warn); }
-  .blocked .none-list .why + .why { margin-top: 4px; }
-  .script { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; box-shadow: var(--shadow); scroll-margin-top: 16px; }
+  .scripts .dot { background: var(--link); }  .script { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; box-shadow: var(--shadow); scroll-margin-top: 16px; }
   .script .s-title { font-size: 14px; font-weight: 700; color: var(--ink-2); }
   .script p { margin: 6px 0 0; }
   .script p[lang="ja"] { font-size: 16px; line-height: 1.7; }
@@ -118,6 +115,7 @@
 
 
 
+
 <div class="wrap">
   <div class="eyebrow">Kyushu Trip · 4명</div>
   <h1>예약 체크리스트</h1>
@@ -138,6 +136,18 @@
         <div class="proxy-note">미미테이블 (10/28 확인): 예약금 결제 후 신청 → 가게 확인 후 최대 1일 안에 확정, 거절되면 전액 환불 · 신청 수락률 <b>8~14일 전 58% → 4~7일 전 37%로 떨어짐 → 오늘(10/28) 신청 권장</b> · 취소 시 4일 전 100% / 3일 전 50% / 2일 전~당일 환불 없음 · 미미테이블 표기상 신용카드 결제 · 주차 가능</div>
         <div class="proxy-note">AutoReserve는 "예약 대행 불가" (10/28 확인)</div>
         <div class="actions"><a class="tel" href="tel:+81977210263">☎ 0977-21-0263</a><a class="proxy" href="https://mimitable.com/restaurants/c4441f84-1e09-4860-a807-58d2b69776de?lng=ko" target="_blank" rel="noopener">미미테이블 대행 예약</a><a href="https://tabelog.com/en/oita/A4402/A440202/44000628/" target="_blank" rel="noopener">타베로그</a><a href="#script-owada">전화용 일본어 ↓</a></div>
+      </div>
+    </div>
+
+    <div class="item" data-id="toyoken-course">
+      <input type="checkbox" aria-label="완료">
+      <div>
+        <div class="when">2일차 11/5 (목) 18:00 · 저녁</div>
+        <div class="name">도요켄 (중화 코스 ¥6,600)<span class="jp">レストラン東洋軒</span></div>
+        <div class="why">코스는 <b>예약제</b> — 대인 4명 이상, ¥6,600 · 8,800 코스는 <b>2일 전까지</b>, 시작 시간 17:00~20:00 (공식) · 코스에 토리텐이 없음 (2025 가을판 기준)</div>
+        <div class="how"><b>전화 또는 방문</b> · 대인 4명 · 18:00 · ¥6,600 코스 · <b>토리텐 단품 추가 가능한지 같이 문의</b> · 전화는 16~17시, 21~22시가 잘 연결됨</div>
+        <div class="actions"><a class="tel" href="tel:+81977233333">☎ 0977-23-3333</a><a href="https://www.toyoken-beppu.co.jp/wp-content/uploads/2025/09/2025_autumn.jpg" target="_blank" rel="noopener">코스 안내 (공식 이미지)</a><a href="https://www.toyoken-beppu.co.jp/menu/" target="_blank" rel="noopener">공식</a><a href="#script-toyoken">전화용 일본어 ↓</a></div>
+        <span class="deadline">예약 마감 11/3 (화)</span>
       </div>
     </div>
 
@@ -181,17 +191,6 @@
 
   </section>
 
-  <section class="none blocked">
-    <h2><span class="dot"></span>예약 불가 — 가서 기다리기</h2>
-    <p class="sec-sub">예약하고 싶어도 가게가 받지 않는 곳</p>
-    <div class="none-list">
-      <div><b>도요켄 (토리텐 원조)</b><span class="jp">レストラン東洋軒</span>
-        <div class="why">2일차 11/5 (목) 18:00 저녁 · <b>토리텐 정식(일반 메뉴)은 예약 불가</b> — 공식 예약 규칙: 「単品料理のみ、席のみ、当日の予約は受け付けていません」(단품 요리만 · 자리만 · 당일 예약은 받지 않음). 예약은 <b>대인 4명 이상 코스(1인 ¥6,600 / 8,800 / 11,000)만</b>, 2일 전까지 전화 0977-23-3333</div>
-        <div class="why">→ 예약 없이 가서 기다리기. 저녁 영업은 17:00부터라 조금 일찍 가면 대기가 줄 수 있음 · 코스로 예약하면 1인 약 +¥5,000 (예산 초과)</div>
-      </div>
-    </div>
-  </section>
-
   <section class="none">
     <h2><span class="dot"></span>예약 필요 없음</h2>
     <p class="sec-sub">예약 없이 들르면 되는 곳</p>
@@ -209,6 +208,12 @@
       <div class="s-title">오와다즈시 · 11/5 (목) 12:00 · 4명</div>
       <p lang="ja">もしもし、予約をお願いしたいのですが。<br>11月5日、木曜日の12時に、4名でお願いします。<br>名前は〇〇です。韓国からの旅行者です。<br>クレジットカードは使えますか？</p>
       <p class="ko">여보세요, 예약하고 싶은데요. 11월 5일 목요일 12시에 4명으로 부탁드립니다. 이름은 ○○입니다. 한국에서 온 여행자입니다. 신용카드 쓸 수 있나요?</p>
+    </div>
+
+    <div class="script" id="script-toyoken">
+      <div class="s-title">도요켄 · 11/5 (목) 18:00 · 대인 4명 · ¥6,600 코스</div>
+      <p lang="ja">もしもし、予約をお願いしたいのですが。<br>11月5日、木曜日の18時に、大人4名で、6,600円のコースをお願いします。<br>名前は〇〇です。韓国からの旅行者です。<br>コースに加えて、とり天を単品で追加注文できますか？</p>
+      <p class="ko">여보세요, 예약하고 싶은데요. 11월 5일 목요일 18시에 대인 4명, 6,600엔 코스로 부탁드립니다. 이름은 ○○입니다. 한국에서 온 여행자입니다. 코스에 더해서 토리텐을 단품으로 추가 주문할 수 있나요?</p>
     </div>
 
     <div class="script">
